@@ -2,7 +2,7 @@
 
 This Arduino Car is used for the Master's thesis of David (@Code-Schwabe). It has the capabilities to
 * drive autonomously following a line on the ground
-* measure the distance in N directions
+* measure the distance in N directions (tbd)
 * communicate with another Arduino Car using WiFi
 
 ## Hardware
@@ -10,11 +10,11 @@ This Arduino Car is used for the Master's thesis of David (@Code-Schwabe). It ha
 The hardware in use is the following:
 * 1 Arduino Mega 2560 Rev3
 * 1 Arduino Nano Rev3
-* 1 chassis with simple 4 DC motors
+* 1 chassis with 4 simple DC motors
 * 1 motor controller L298N
 * 1 WiFi shield ESP8266-01S
 * 3 infrared sensors KY-033
-* N ultrasonic distance sensors HC-SR04
+* N ultrasonic distance sensors HC-SR04 (tdb)
 * ...many cables, glue and a breadboard
 
 It can be powered by any 12V power source - for mobility reasons, a 3 cell LiPo battery is used in our current set-up.
@@ -22,7 +22,7 @@ It can be powered by any 12V power source - for mobility reasons, a 3 cell LiPo 
 The hardware is wired as depicted here:
 ![](wirings/arduino%20car.png)
 
-| :attention: The wiring isn't complete yet! |
+| :warning: The wiring isn't complete yet! |
 | --- |
 
 ## Software
