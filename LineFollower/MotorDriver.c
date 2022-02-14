@@ -59,7 +59,7 @@ void rightReverse(){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void rightSpeed(int speed){
@@ -93,7 +93,7 @@ void leftReverse(){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void leftSpeed(int speed){
@@ -105,7 +105,7 @@ void leftSpeed(int speed){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void setSpeed(int speed){
@@ -140,7 +140,7 @@ void forward(){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void driveForward(int speed){
@@ -167,7 +167,7 @@ void reverse(){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void driveReverse(int speed){
@@ -190,7 +190,7 @@ void turnLeft(){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void turnLeftForward(int speed){
@@ -213,7 +213,7 @@ void turnRight(){
  * 
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
- * The operation controlles the motors my sending PMW signals to the L298N motor controller. 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
 void turnRightForward(int speed){
