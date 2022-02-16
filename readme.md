@@ -33,8 +33,8 @@ The software in this repository has two purposes:
 
 ### LineFollower
 
-The LineFollower libraries implement the interaction with the sensors (infrared) and actuators (dc motors via motor controller) in order to make the car drive autonomously while following a black line on the ground.  
+The LineFollower libraries implement the interaction with the sensors (infrared, distance) and actuators (dc motors via motor controller) in order to make the car drive autonomously while following a black line on the ground and measure the distance to other cars or obstacles.
 
 ### CarCoordinator (TBD)
 
-The CarCoordinator libraries encapsulate the behavior of detecting other cars in close distance and communicating with them.
+The CarCoordinator libraries encapsulate the communication with other cars for cooridated behavior.

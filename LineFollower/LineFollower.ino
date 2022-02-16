@@ -4,8 +4,9 @@
  * @brief Demonstration code for a line follower car. 
  */
 
-#include "MotorDriver.c"
-#include "LineDetector.c"
+#include "./MotorDriver.c"
+#include "./LineDetector.c"
+#include "./DistanceSensor.c"
 
 LinePosition position;
 int base_speed = 60;
@@ -17,11 +18,17 @@ void setup(){
     initLineDetector();
     position = detectPosition(ON_LINE);
 
+    initializeDistanceSensors();
+
     Serial.println("Setup complete!");
 }
 
 void loop(){
-    followLine(base_speed);
+    if (getFrontDistance() < 5){
+        stop();
+    } else {
+        followLine(base_speed);
+    }
     // delay(100);
 }
 
