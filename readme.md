@@ -24,13 +24,6 @@ The two Arduinos communicate via an I2C bus connection.
 
 It can be powered by any 12V power source - for mobility reasons, a 3 cell LiPo battery is used in our current set-up. It is also useful to connect the battery to a switch first, so the car isn't powered up directly on battery connection.
 
-The following pictures show an exemplary set-up.
-
-![](fotos/car_v1_right-front-view.jpg)
-![](fotos/car_v1_right-rear-view.jpg)
-And without the battery:
-![](fotos/car_v1_side-view_no-battery.jpg)
-
 ## Software
 
 The software in this repository has two purposes:
@@ -43,4 +36,19 @@ The LineFollower libraries implement the interaction with the sensors (infrared,
 
 ### CarCoordinator
 
-The CarCoordinator encapsulates the communication with other cars for coordinated behavior. Currently, it only simulates the communication with the LineFollower and the connection to a WiFi network.
+The CarCoordinator encapsulates the communication with other cars for coordinated behavior. Currently, it connects to an MQTT broker where it listens to "START" and "STOP" messages. Upon receiving a message, it instructs the LineFollower component to start or stop the car accordingly. 
+
+## Installation Example
+
+The following pictures show an exemplary set-up where the wiring is a little more visible (might be helpful for reconstruction).
+
+![](fotos/car_v1_right-front-view.jpg)
+![](fotos/car_v1_right-rear-view.jpg)
+And without the battery:
+![](fotos/car_v1_side-view_no-battery.jpg)
+
+And the following pictures show an exemplary set-up where the wiring is a little more hidden (looks better :sparkles:).
+
+![](fotos/car_v2_left_front_view.jpg)
+![](fotos/car_v2_right-front-view.jpg)
+![](fotos/car_v2_right-side-rear-view.jpg)
