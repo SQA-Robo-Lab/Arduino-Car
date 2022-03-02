@@ -13,7 +13,7 @@ LinePosition position;
 int baseSpeed = 60;
 
 const byte ownI2CAddress = 8;
-const byte coordinatoI2CAddress = 9;
+const byte coordinatorI2CAddress = 9;
 
 char i2cBuffer[32];
 boolean i2cNewMessageFlag = false;
