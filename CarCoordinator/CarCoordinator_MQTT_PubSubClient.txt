@@ -1,0 +1,59 @@
+#include <Wire.h>
+#include <SoftwareSerial.h>
+#include <WiFiEsp.h>
+#include <PubSubClient.h>
+
+const byte ownI2CAddress = 9;
+const byte driverI2CAddress = 8;
+
+char ssid[] = "Section_Control";
+char pass[] = "Latcc@tsc4c!";
+int status = WL_IDLE_STATUS;
+SoftwareSerial EspSerial(2,3);
+
+WiFiEspClient wifiClient;
+PubSubClient mqttClient;
+
+void setup(){
+    Serial.begin(9600);
+
+    Wire.begin(ownI2CAddress);
+
+    EspSerial.begin(9600);
+    WiFi.init(&EspSerial);
+
+    while(status != WL_CONNECTED){
+        status = WiFi.begin(ssid, pass);
+    }
+    
+    delay(1000);
+    mqttClient.setClient(wifiClient);
+    mqttClient.setServer("192.168.0.100", 1883);
+
+    while(!mqttClient.connected()){ 
+        if (mqttClient.connect("arduino")) {
+            Serial.println("MQTT connected");
+        } else {
+            Serial.println("MQTT not connected");
+            delay(5000);
+        }
+    }
+}
+
+void loop(){
+    // Wire.beginTransmission(driverI2CAddress);
+    // Wire.write("START");
+    // Wire.endTransmission();
+    // Serial.println("START");
+    // delay(random(2000, 7000));
+
+    // Wire.beginTransmission(driverI2CAddress);
+    // Wire.write("STOP");
+    // Wire.endTransmission();
+    // Serial.println("STOP");
+    // delay(random(2000, 7000));
+    mqttClient.loop();
+    mqttClient.publish("test", "Hallo!");
+    Serial.println("Hallo!");
+    delay(3000);
+}
