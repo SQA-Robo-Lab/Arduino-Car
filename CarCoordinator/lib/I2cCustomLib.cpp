@@ -40,7 +40,7 @@ static void receiveI2cMessageIntoBuffer(int numberOfBytesReceived){
         list = &(*list)->nextElement;
     }
     if (bufferToFill != NULL){
-        //TODO: messageStringBuffer hold a JSON string - should be unmarshalled if content matters
+        //TODO: messageStringBuffer holds a JSON string - should be unmarshalled if content matters
         MessageBuffer_enqueue(bufferToFill, messageStringBuffer);
     }
 }
@@ -53,7 +53,7 @@ static void appendI2cReceiverToList(struct I2cReceiverListElement **list, I2cRec
     newListElement = (struct I2cReceiverListElement*) malloc(sizeof(struct I2cReceiverListElement));
     newListElement->receiver = newReceiver;
     newListElement->nextElement = NULL;
-    *list = newListElement;
+    *list = newListElement; //append the new item to the list
 }
 
 static void createAndRegisterI2cReceiver(I2cReceiver* receiver,

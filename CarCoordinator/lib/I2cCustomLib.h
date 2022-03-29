@@ -18,7 +18,7 @@ typedef struct I2cHandle {
 } I2cHandle;
 
 /**
- * @brief Setup the I2C communication.
+ * @brief Setup the I2C communication once per ECU.
  * 
  * @param ownI2cAddress the own address on the I2C bus.
  */
