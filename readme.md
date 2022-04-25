@@ -24,19 +24,29 @@ The two Arduinos communicate via an I2C bus connection.
 
 It can be powered by any 12V power source - for mobility reasons, a 3 cell LiPo battery is used in our current set-up. It is also useful to connect the battery to a switch first, so the car isn't powered up directly on battery connection.
 
+For some simple examples with the hardware device above, refer to the [Sensor Playground](https://github.com/SQA-Robo-Lab/Sensor-Playground). 
+
 ## Software
 
 The software in this repository has two purposes:
 * Demonstrate the capabilities of the Arduino Car.
 * Provide device libararies (where possible) for the car's capabilities (continuous components) that can later be included in the code generation process.
 
-### LineFollower
-
-The LineFollower libraries implement the interaction with the sensors (infrared, distance) and actuators (dc motors via motor controller) in order to make the car drive autonomously while following a black line on the ground and measure the distance to other cars or obstacles.
-
 ### CarCoordinator
 
 The CarCoordinator encapsulates the communication with other cars for coordinated behavior. Currently, it connects to an MQTT broker where it listens to "START" and "STOP" messages. Upon receiving a message, it instructs the LineFollower component to start or stop the car accordingly. 
+
+### CarCoodrinatorLib [TODO]
+
+The CarCoodrinatorLib contains the functionality of the CarCoordinator, but using the custom I2C and MQTT libraries that were created for the MUML-based code generation. Currently, this is not working properly. 
+
+### LineFollower
+
+The LineFollower implement the interaction with the sensors (infrared, distance) and actuators (dc motors via motor controller) in order to make the car drive autonomously while following a black line on the ground and measure the distance to other cars or obstacles. The LineFollower module also listens to I2C messages that tell the car to "START" or to "STOP".
+
+### LineFollowerLib
+
+The LineFollowerLib contains the functionality of the LineFollower module and abstracts it into libraries that allow easier reuse. At the moment, the I2C functionality is not included.
 
 ## Installation Example
 
