@@ -1,3 +1,8 @@
+/**
+ * @file DistanceSensor.h
+ * @author david
+ * @brief Encapsulates the functions to access two HC-SR04 ultrasonic distance sensors.
+ */
 #ifndef DISTANCE_SENSOR_H
 #define DISTANCE_SENSOR_H
 

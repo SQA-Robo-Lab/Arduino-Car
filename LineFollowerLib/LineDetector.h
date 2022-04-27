@@ -1,3 +1,8 @@
+/**
+ * @file LineDetector.h
+ * @author david
+ * @brief This library uses three infrared sensor to detect the car's position relative to a line.
+ */
 #ifndef LINE_DETECTOR_H
 #define LINE_DETECTOR_H
 

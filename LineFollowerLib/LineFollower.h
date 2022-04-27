@@ -1,3 +1,8 @@
+/**
+ * @file LineFollower.h
+ * @author david
+ * @brief A library to access the robot cars line following capabilities.
+ */
 #ifndef LINE_FOLLOWER_H
 #define LINE_FOLLOWER_H
 

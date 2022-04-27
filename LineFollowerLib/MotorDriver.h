@@ -1,3 +1,8 @@
+/**
+ * @file MotorDriver.h
+ * @author david
+ * @brief A library providing functions to control the robot car using the motor controller L298N.
+ */
 #ifndef MOTOR_DRIVER_H
 #define MOTOR_DRIVER_H
 
@@ -7,13 +12,22 @@
 
 #include "Arduino.h"
 
-
 /**
  * @brief Initializes the motor driver by setting the pin modes for the arduino pins.
  * 
  * This method has to be called once for all other operations to work correctly!
  */
 void initMotorDriver();
+
+/**
+ * @brief Sets the speed of all motors to the desired value without changing directions etc.
+ * 
+ * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
+ * 
+ * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ * A value between 0-59 is not recommended, because the motors do not get enough power to move the car.
+ */
+void setSpeed(int speed);
 
 /**
  * @brief Sets the movement direction of all motors to "forward" AND sets the motor speed.
@@ -24,7 +38,7 @@ void initMotorDriver();
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
  * The operation controls the motors my sending PMW signals to the L298N motor controller. 
- * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
+ * A value between 0-59 is not recommended, because the motors do not getenough power to move the car.
  */
 void driveForward(int speed);
 
@@ -37,7 +51,7 @@ void driveForward(int speed);
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
  * The operation controls the motors my sending PMW signals to the L298N motor controller. 
- * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
+ * A value between 0-59 is not recommended, because the motors do not getenough power to move the car.
  */
 void driveReverse(int speed);
 
@@ -47,7 +61,7 @@ void driveReverse(int speed);
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
  * The operation controls the motors my sending PMW signals to the L298N motor controller. 
- * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
+ * A value between 0-59 is not recommended, because the motors do not getenough power to move the car.
  */
 void turnLeftForward(int speed);
 
@@ -57,7 +71,7 @@ void turnLeftForward(int speed);
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
  * 
  * The operation controls the motors my sending PMW signals to the L298N motor controller. 
- * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
+ * A value between 0-59 is not recommended, because the motors do not getenough power to move the car.
  */
 void turnRightForward(int speed);
 
