@@ -13,8 +13,6 @@
 #include "LineDetector.h"
 #include "MotorDriver.h"
 
-LinePosition globalCarPosition;
-
 /**
  * @brief Initializes the motor driver and line detector that are required for the LineFollower.
  * 
