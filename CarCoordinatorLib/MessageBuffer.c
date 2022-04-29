@@ -6,6 +6,7 @@
  *
  * copied from org.muml.c.adapter.container/resources/container_lib
  */
+
 #include "MessageBuffer.h"
 
 MessageBuffer* MessageBuffer_create(size_t capacity, size_t elementSize,

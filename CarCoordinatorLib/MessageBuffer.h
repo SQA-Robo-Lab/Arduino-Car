@@ -4,18 +4,20 @@
  * @brief This file specifies the MessageBuffer, which are contained at the Components
  * @details  The MessageBuffer are used at the Components to store  MiddlewareMessage%s
  *
- * copied and adapted from org.muml.c.adapter.container/resources/container_lib
+ * copied from org.muml.c.adapter.container/resources/container_lib
  */
 #ifndef MESSAGEBUFFER_H_
 #define MESSAGEBUFFER_H_
+
+//FIXME: moved from Lib Folder here (components shall not have a dependency to a buffer)
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "standardTypes.h" // The standardTypes.h are located in the lib directory of the component type code
-// use /types/standardTypes.h and NOT /lib/standardTypes.h, just to reference the same as the component type code -- without overriding NULL
 
+
+#include "standardTypes.h"
 /**
  * 
  * @brief A MessageBuffer of a Port
@@ -25,7 +27,7 @@
 typedef struct MessageBuffer{
 	void* buffer; /**< A ring buffer of MiddlewareMessages  */
 	void *buffer_end; // end of buffer
-	size_t capacity; // capacity of the buffer
+	size_t capacity; // capacity of thge buffer
 	size_t count; /**< The number of currently enqueued MiddlewareMessages; The current Size of the Queue */
 	size_t elementSize; //size of elements stored in buffer
 	void* head;  /**< The current Index of the MessageBuffer::queue */ // points to the current head element

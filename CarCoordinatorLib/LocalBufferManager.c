@@ -1,7 +1,6 @@
 /**
  * copied and adapted from org.muml.c.adapter.container/resources/container_lib
  */
-
 //available per ECU across container
 
 #ifdef __cplusplus

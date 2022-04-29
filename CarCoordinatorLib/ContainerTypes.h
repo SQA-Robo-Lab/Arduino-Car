@@ -1,12 +1,10 @@
 #ifndef CONTAINER_TYPES_
 #define CONTAINER_TYPES_
-
-//available per ECU across container
-//copied from orglmuml.c.adapter.container/resources/container_lib due to necessary adjustments
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+//available per ECU across container
+//copied from orglmuml.c.adapter.container/resources/container_lib due to necessary adjustments
 
 //Global for all Container (e.g. Lib_Container)
 #include "port.h" //no subdirs for Arduino build
@@ -22,8 +20,6 @@ typedef struct PortHandle {
 	Port* port;
 	void *concreteHandle;
 } PortHandle;
-
-
 
 #ifdef __cplusplus
 }
