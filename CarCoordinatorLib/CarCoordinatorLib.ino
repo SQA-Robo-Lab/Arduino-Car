@@ -11,6 +11,8 @@ int i;
 void setup(){
     i=0;
     Serial.begin(9600);
+
+
     Serial.println("Setup");
     struct MqttConfig mConf = {
         "192.168.0.100",
@@ -27,28 +29,26 @@ void setup(){
 
     mqttCommunication_setup(&wifiConfig, mqttConfig);
     delay(10000);
-    char* test_message = "hello";
-    sendMqttMessage("helloWorld/", "hello", (byte*) test_message, strlen(test_message));
-    char* sub_topic = "car-commands/";
-    createAndRegisterMqttSubscriber(sub, sub_topic, sub_topic, 1, 20, true);
+    sendMqttMessage("car/", "commands", (byte*) "Setup", 6);
+    
+    sub = (MqttSubscriber*) malloc(sizeof(MqttSubscriber));
+    initAndRegisterMqttSubscriber(sub, "car/", "commands", 1, 20, true);
 
-    i2cCommunication_setup(9);
+    // i2cCommunication_setup(9);
 }
 
 void loop(){
     mqttCommunication_loop(mqttConfig);
-    Serial.println(MessageBuffer_doesMessageExists(sub->buffer));
-    Serial.println(sub->buffer->count);
-    delay(1000);
-    // if (MessageBuffer_doesMessageExists(sub->buffer)){
-    //     Serial.println("New message!");
-    //     char* message;
-    //     MessageBuffer_dequeue(sub->buffer, message);
-    // }
-    // if (i % 10000 == 0){
-    //     Serial.println("Hello");
-    //     char* test_message = "hello";
-    //     sendMqttMessage("helloWorld/", "hello", &test_message);
-    // }
-    // i++;
+    // globalMqttClient.loop();
+    if (MessageBuffer_doesMessageExists(sub->buffer)){
+        Serial.println("New message!");
+        char* message;
+        MessageBuffer_dequeue(sub->buffer, message);
+        Serial.println(message);
+    }
+    if (i % 300 == 0){
+        Serial.println("Hello");
+        sendMqttMessage("helloWorld/", "hello", (byte*) "hello", 6);
+    }
+    i++;
 }

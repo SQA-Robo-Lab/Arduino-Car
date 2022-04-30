@@ -38,7 +38,15 @@ The CarCoordinator encapsulates the communication with other cars for coordinate
 
 ### CarCoodrinatorLib [TODO]
 
-The CarCoodrinatorLib contains the functionality of the CarCoordinator, but using the custom I2C and MQTT libraries that were created for the MUML-based code generation. Currently, this is not working properly. 
+The CarCoodrinatorLib serves to test the I2C and MQTT libraries that were created for the MUML-based code generation. Currently, the MQTT library is not working properly. 
+
+### I2cLibTester
+
+The I2cLibTester demonstrates the workings of the I2cCustomLib.
+
+### I2cLineFollower
+
+Extends the functionality of the LineFollowerLib with listening to messsages from I2C, demonstrating the workings of the I2cCustomLib.
 
 ### LineFollower
 
