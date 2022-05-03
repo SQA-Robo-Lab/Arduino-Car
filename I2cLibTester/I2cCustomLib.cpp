@@ -105,7 +105,7 @@ static void appendI2cReceiverToList(struct I2cReceiverListElement **list, I2cRec
     *list = newListElement; //append the new item to the list
 }
 
-static void createAndRegisterI2cReceiver(I2cReceiver* const receiver,
+static void initAndRegisterI2cReceiver(I2cReceiver* const receiver,
                         char* const messageTypeName,
                         size_t bufferCapacity,
                         size_t messageSize,
