@@ -38,7 +38,9 @@ The CarCoordinator encapsulates the communication with other cars for coordinate
 
 ### CarCoodrinatorLib [TODO]
 
-The CarCoodrinatorLib serves to test the I2C and MQTT libraries that were created for the MUML-based code generation. Currently, the MQTT library is not working properly. 
+The CarCoodrinatorLib serves to test the I2C and MQTT libraries that were created for the MUML-based code generation. Currently, the MQTT library is not working properly. Messages are only consume occasionally, i.e., the callback is not always called when a new message arrives for the subscribed topic. Sometimes it works, sometimes it doesn't - the problem's cause could not be found yet.
+
+Therefore, in order to demonstrate the workings of the custom I2C library separately, the I2cLibTester and I2cLineFollower are created. They can be deployed to the Arduino car: The I2cLibTester will send messages to START and STOP the car in random periods, and the I2cLineFollower will adapt its driving behavior depending on these messages while following a line on the ground.
 
 ### I2cLibTester
 
@@ -46,11 +48,11 @@ The I2cLibTester demonstrates the workings of the I2cCustomLib.
 
 ### I2cLineFollower
 
-Extends the functionality of the LineFollowerLib with listening to messsages from I2C, demonstrating the workings of the I2cCustomLib.
+Extends the functionality of the LineFollowerLib with listening to messsages from I2C, demonstrating the workings of the I2cCustomLib. It essentially implements the LineFollower by using the I2cCustomLibrary and the LineFollower-Libraries from LineFollowerLib.
 
 ### LineFollower
 
-The LineFollower implement the interaction with the sensors (infrared, distance) and actuators (dc motors via motor controller) in order to make the car drive autonomously while following a black line on the ground and measure the distance to other cars or obstacles. The LineFollower module also listens to I2C messages that tell the car to "START" or to "STOP".
+The LineFollower implements the interaction with the sensors (infrared, distance) and actuators (dc motors via motor controller) in order to make the car drive autonomously while following a black line on the ground and measure the distance to other cars or obstacles. The LineFollower module also listens to I2C messages that tell the car to "START" or to "STOP".
 
 ### LineFollowerLib
 

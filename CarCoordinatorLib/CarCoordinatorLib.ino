@@ -1,5 +1,3 @@
-#define DEBUG 1
-
 #include "MqttCustomLib.hpp"
 #include "I2cCustomLib.hpp"
 #include <WiFiEsp.h>
@@ -35,6 +33,8 @@ void setup(){
     initAndRegisterMqttSubscriber(sub, "car/", "commands", 1, 20, true);
 
     // i2cCommunication_setup(9);
+
+    Serial.println("Setup done!");
 }
 
 void loop(){
