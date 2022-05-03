@@ -9,7 +9,7 @@ const byte ownI2CAddress = 9;
 const byte driverI2CAddress = 8;
 
 char ssid[] = "Section_Control";
-char pass[] = "************";
+char pass[] = "Latcc@tsc4c!";
 int status = WL_IDLE_STATUS;
 SoftwareSerial EspSerial(2,3);
 

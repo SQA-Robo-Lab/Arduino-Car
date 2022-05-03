@@ -1,0 +1,90 @@
+#include <Wire.h>
+#include <SoftwareSerial.h>
+#include <WiFiEsp.h>
+#include <Adafruit_MQTT.h>
+#include <Adafruit_MQTT_Client.h>
+
+const byte ownI2CAddress = 9;
+const byte driverI2CAddress = 8;
+
+char ssid[] = "Section_Control";
+char pass[] = "Latcc@tsc4c!";
+int status = WL_IDLE_STATUS;
+SoftwareSerial EspSerial(2,3);
+
+WiFiEspClient wifiClient;
+
+char mqttIp[] = "192.168.0.100";
+int mqttPort = 1883;
+
+Adafruit_MQTT_Client mqttClient(&wifiClient, mqttIp, mqttPort, "Arduino Car", "", "");
+Adafruit_MQTT_Publish test = Adafruit_MQTT_Publish(&mqttClient, "Test", 0);
+
+void setup(){
+    Serial.begin(9600);
+
+    Wire.begin(ownI2CAddress);
+
+    EspSerial.begin(9600);
+    WiFi.init(&EspSerial);
+
+    while(status != WL_CONNECTED){
+        status = WiFi.begin(ssid, pass);
+    }
+    
+    delay(1000);
+   
+}
+
+void loop(){
+    // Wire.beginTransmission(driverI2CAddress);
+    // Wire.write("START");
+    // Wire.endTransmission();
+    // Serial.println("START");
+    // delay(random(2000, 7000));
+
+    // Wire.beginTransmission(driverI2CAddress);
+    // Wire.write("STOP");
+    // Wire.endTransmission();
+    // Serial.println("STOP");
+    // delay(random(2000, 7000));
+    MQTT_connect();
+    if(test.publish("Hallo!")){
+        Serial.println("Hallo!");
+    } else {
+        Serial.println("Publish failed...");    
+    }
+    delay(3000);
+    mqttClient.processPackets(1);
+
+    if(! mqttClient.ping()) {
+        mqttClient.disconnect();
+    }
+}
+
+// Function to connect and reconnect as necessary to the MQTT server.
+// Should be called in the loop function and it will take care if connecting.
+void MQTT_connect() {
+  int8_t ret;
+
+  // Stop if already connected.
+  if (mqttClient.connected()) {
+    return;
+  }
+
+  Serial.print("Connecting to MQTT... ");
+
+  uint8_t retries = 3;
+  while ((ret = mqttClient.connect()) != 0) { // connect will return 0 for connected
+       Serial.println(mqttClient.connectErrorString(ret));
+       Serial.println("Retrying MQTT connection in 10 seconds...");
+       mqttClient.disconnect();
+       delay(10000);  // wait 10 seconds
+       retries--;
+       if (retries == 0) {
+         // basically die and wait for WDT to reset me
+         while (1);
+       }
+  }
+  Serial.println("MQTT Connected!");
+}
