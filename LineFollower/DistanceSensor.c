@@ -11,6 +11,8 @@
 #define FRONT_ECHO_PIN 27
 #define REAR_TRIGGER_PIN 24
 #define REAR_ECHO_PIN 25
+// The time after which pulseIn will stop waiting. Can't be 0 to avoid the program crashing
+#define ECHO_TIMEOUT_US 10000
 
 
 /**
@@ -35,7 +37,11 @@ void initializeDistanceSensors(){
  * @param duration: the duration the signal travels in micro-seconds
  */
 int calculateDistanceInCm(long duration){
-  return (duration / 2) * 0.0343;
+    if (duration == 0) {
+        return ECHO_TIMEOUT_US * 0.0343;
+    } else {
+        return (duration / 2) * 0.0343;
+    }
 }
 
 /**
@@ -54,7 +60,7 @@ int getFrontDistance(){
     digitalWrite(FRONT_TRIGGER_PIN, LOW);
 
     //measure the echo duration
-    int duration = pulseIn(FRONT_ECHO_PIN, HIGH, 0);
+    int duration = pulseIn(FRONT_ECHO_PIN, HIGH, ECHO_TIMEOUT_US);
 
     return calculateDistanceInCm(duration);
 }
@@ -76,7 +82,7 @@ int getRearDistance(){
     digitalWrite(REAR_TRIGGER_PIN, LOW);
 
     //measure the echo duration
-    int duration = pulseIn(REAR_ECHO_PIN, HIGH, 0);
+    int duration = pulseIn(REAR_ECHO_PIN, HIGH, ECHO_TIMEOUT_US);
 
     return calculateDistanceInCm(duration);
 }
