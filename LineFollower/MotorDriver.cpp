@@ -38,6 +38,18 @@ uint8_t frontLeftCurrSpeed = 0;
 uint8_t frontRightCurrSpeed = 0;
 uint8_t rearLeftCurrSpeed = 0;
 uint8_t rearRightCurrSpeed = 0;
+uint8_t frontLeftCurrDirection = 0; //0b00, 0b11: Off; 0b10: forward; 0b01: backward
+uint8_t frontRightCurrDirection = 0;
+uint8_t rearLeftCurrDirection = 0;
+uint8_t rearRightCurrDirection = 0;
+
+enum MotorDirection {
+    MOTOR_STOP = 0b00,
+    MOTOR_BACKWARD = 0b01,
+    MOTOR_FORWARD = 0b10,
+    MOTOR_STOP_HIGH = 0b11
+};
+
 /* enum MotorName {
     FRONT_LEFT,
     FRONT_RIGHT,
@@ -170,6 +182,11 @@ void resetTimer5() {
 void frontLeftSpeed(int speed)
 {
     frontLeftCurrSpeed = speed;
+    if (frontLeftCurrSpeed == 0) {
+        frontLeftStop();
+    } else {
+        frontLeftDirection(frontLeftCurrDirection);
+    }
     /*if (frontLeftCurrSpeed > 0 && frontLeftCurrSpeed < BOOST_THRESHOLD) {
         Serial.print("Boosting for ");
         Serial.println(frontLeftCurrSpeed);
@@ -191,6 +208,11 @@ void frontLeftSpeed(int speed)
 void rearLeftSpeed(int speed)
 {
     rearLeftCurrSpeed = speed;
+    if (rearLeftCurrSpeed == 0) {
+        rearLeftStop();
+    } else {
+        rearLeftDirection(rearLeftCurrDirection);
+    }
     analogWrite(REAR_LEFT_ENGINE_SPEED_PIN, speed);
 }
 
@@ -202,6 +224,11 @@ void rearLeftSpeed(int speed)
 void frontRightSpeed(int speed)
 {
     frontRightCurrSpeed = speed;
+    if (frontRightCurrSpeed == 0) {
+        frontRightStop();
+    } else {
+        frontRightDirection(frontRightCurrDirection);
+    }
     analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, speed);
 }
 
@@ -213,7 +240,40 @@ void frontRightSpeed(int speed)
 void rearRightSpeed(int speed)
 {
     rearRightCurrSpeed = speed;
+    if (rearRightCurrSpeed == 0) {
+        rearRightStop();
+    } else {
+        rearRightDirection(rearRightCurrDirection);
+    }
     analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, speed);
+}
+
+void frontLeftDirection(uint8_t direction) {
+    frontLeftCurrDirection = direction;
+    analogWrite(FRONT_LEFT_ENGINE_SPEED_PIN, frontLeftCurrSpeed);
+    digitalWrite(FRONT_LEFT_ENGINE_FORWARD_PIN, (direction >> 1) & 0b1);
+    digitalWrite(FRONT_LEFT_ENGINE_REVERSE_PIN, (direction) & 0b1);
+}
+
+void frontRightDirection(uint8_t direction) {
+    frontRightCurrDirection = direction;
+    analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, frontRightCurrSpeed);
+    digitalWrite(FRONT_RIGHT_ENGINE_FORWARD_PIN, (direction >> 1) & 0b1);
+    digitalWrite(FRONT_RIGHT_ENGINE_REVERSE_PIN, (direction) & 0b1);
+}
+
+void rearLeftDirection(uint8_t direction) {
+    rearLeftCurrDirection = direction;
+    analogWrite(REAR_LEFT_ENGINE_SPEED_PIN, rearLeftCurrSpeed);
+    digitalWrite(REAR_LEFT_ENGINE_FORWARD_PIN, (direction >> 1) & 0b1);
+    digitalWrite(REAR_LEFT_ENGINE_REVERSE_PIN, (direction) & 0b1);
+}
+
+void rearRightDirection(uint8_t direction) {
+    rearRightCurrDirection = direction;
+    analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, rearRightCurrSpeed);
+    digitalWrite(REAR_RIGHT_ENGINE_FORWARD_PIN, (direction >> 1) & 0b1);
+    digitalWrite(REAR_RIGHT_ENGINE_REVERSE_PIN, (direction) & 0b1);
 }
 
 /**
@@ -224,10 +284,8 @@ void rearRightSpeed(int speed)
  */
 void rightForward()
 {
-    digitalWrite(FRONT_RIGHT_ENGINE_FORWARD_PIN, HIGH);
-    digitalWrite(FRONT_RIGHT_ENGINE_REVERSE_PIN, LOW);
-    digitalWrite(REAR_RIGHT_ENGINE_FORWARD_PIN, HIGH);
-    digitalWrite(REAR_RIGHT_ENGINE_REVERSE_PIN, LOW);
+    frontRightDirection(MOTOR_FORWARD);
+    rearRightDirection(MOTOR_FORWARD);
 }
 
 /**
@@ -238,10 +296,8 @@ void rightForward()
  */
 void rightReverse()
 {
-    digitalWrite(FRONT_RIGHT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(FRONT_RIGHT_ENGINE_REVERSE_PIN, HIGH);
-    digitalWrite(REAR_RIGHT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(REAR_RIGHT_ENGINE_REVERSE_PIN, HIGH);
+    frontRightDirection(MOTOR_BACKWARD);
+    rearRightDirection(MOTOR_BACKWARD);
 }
 
 /**
@@ -266,10 +322,8 @@ void rightSpeed(int speed)
  */
 void leftForward()
 {
-    digitalWrite(FRONT_LEFT_ENGINE_FORWARD_PIN, HIGH);
-    digitalWrite(FRONT_LEFT_ENGINE_REVERSE_PIN, LOW);
-    digitalWrite(REAR_LEFT_ENGINE_FORWARD_PIN, HIGH);
-    digitalWrite(REAR_LEFT_ENGINE_REVERSE_PIN, LOW);
+    frontLeftDirection(MOTOR_FORWARD);
+    rearLeftDirection(MOTOR_FORWARD);
 }
 
 /**
@@ -280,10 +334,32 @@ void leftForward()
  */
 void leftReverse()
 {
+    frontLeftDirection(MOTOR_BACKWARD);
+    rearLeftDirection(MOTOR_BACKWARD);
+}
+
+void frontLeftStop() {
+    analogWrite(FRONT_LEFT_ENGINE_SPEED_PIN, 255);
     digitalWrite(FRONT_LEFT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(FRONT_LEFT_ENGINE_REVERSE_PIN, HIGH);
+    digitalWrite(FRONT_LEFT_ENGINE_REVERSE_PIN, LOW);
+}
+
+void frontRightStop() {
+    analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, 255);
+    digitalWrite(FRONT_RIGHT_ENGINE_FORWARD_PIN, LOW);
+    digitalWrite(FRONT_RIGHT_ENGINE_REVERSE_PIN, LOW);
+}
+
+void rearLeftStop() {
+    analogWrite(REAR_LEFT_ENGINE_SPEED_PIN, 255);
     digitalWrite(REAR_LEFT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(REAR_LEFT_ENGINE_REVERSE_PIN, HIGH);
+    digitalWrite(REAR_LEFT_ENGINE_REVERSE_PIN, LOW);
+}
+
+void rearRightStop() {
+    analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, 255);
+    digitalWrite(REAR_RIGHT_ENGINE_FORWARD_PIN, LOW);
+    digitalWrite(REAR_RIGHT_ENGINE_REVERSE_PIN, LOW);
 }
 
 /**
@@ -291,10 +367,8 @@ void leftReverse()
  */
 void rightStop()
 {
-    digitalWrite(FRONT_RIGHT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(FRONT_RIGHT_ENGINE_REVERSE_PIN, LOW);
-    digitalWrite(REAR_RIGHT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(REAR_RIGHT_ENGINE_REVERSE_PIN, LOW);
+    frontRightStop();
+    rearRightStop();
 }
 
 /**
@@ -302,10 +376,8 @@ void rightStop()
  */
 void leftStop()
 {
-    digitalWrite(FRONT_LEFT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(FRONT_LEFT_ENGINE_REVERSE_PIN, LOW);
-    digitalWrite(REAR_LEFT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(REAR_LEFT_ENGINE_REVERSE_PIN, LOW);
+    frontLeftStop();
+    rearLeftStop();
 }
 
 /**
@@ -344,7 +416,6 @@ void stop()
 {
     leftStop();
     rightStop();
-    setSpeed(255);
 }
 
 /**

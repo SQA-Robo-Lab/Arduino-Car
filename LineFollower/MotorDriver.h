@@ -46,6 +46,14 @@ void frontRightSpeed(int speed);
  */
 void rearRightSpeed(int speed);
 
+void frontLeftDirection(uint8_t direction);
+
+void frontRightDirection(uint8_t direction);
+
+void rearLeftDirection(uint8_t direction);
+
+void rearRightDirection(uint8_t direction);
+
 /**
  * @brief Sets the dc motor direction of the right motors to "reverse".
  *
@@ -87,6 +95,14 @@ void leftForward();
  * If the motor direction was already set to "reverse", the method will not affect any change.
  */
 void leftReverse();
+
+void frontLeftStop();
+
+void frontRightStop();
+
+void rearLeftStop();
+
+void rearRightStop();
 
 /**
  * @brief Stops the dc motor on the right side to be shorted thus stopping them immediately
