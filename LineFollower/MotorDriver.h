@@ -1,234 +1,207 @@
 /**
- * @file MotorDriver.c
+ * @file MotorDriver.h
  * @author david
  * @brief A library providing functions to control an arduino car using the motor controller L298N.
  */
 
 #include "Arduino.h"
 
-// The pins of an arduino (mega in this example) that are connected to the L298N motor controller.
-
-// PMW pins
-#define LEFT_ENGINE_SPEED_PIN 2 
-#define RIGHT_ENGINE_SPEED_PIN 7 
-
-// Digital IO pins
-#define LEFT_ENGINE_FORWARD_PIN 4
-#define LEFT_ENGINE_REVERSE_PIN 3
-#define RIGHT_ENGINE_FORWARD_PIN 5
-#define RIGHT_ENGINE_REVERSE_PIN 6
+#ifndef MOTOR_DRIVER_H
+#define MOTOR_DRIVER_H
 
 /**
  * @brief Initializes the motor driver by setting the pin modes for the arduino pins.
- * 
+ *
  * This method has to be called once for all other operations to work correctly!
  */
-void initMotorDriver(){
-    pinMode(LEFT_ENGINE_SPEED_PIN, OUTPUT);
-    pinMode(RIGHT_ENGINE_SPEED_PIN, OUTPUT);
-    pinMode(LEFT_ENGINE_FORWARD_PIN, OUTPUT);
-    pinMode(LEFT_ENGINE_REVERSE_PIN, OUTPUT);
-    pinMode(RIGHT_ENGINE_FORWARD_PIN, OUTPUT);
-    pinMode(RIGHT_ENGINE_REVERSE_PIN, OUTPUT);
-}
+void initMotorDriver();
+
+void testTimer();
 
 /**
- * @brief Sets the dc motor direction of the right motors to "forward".
- * 
- * If the motor direction is currently set to "reverse", this method changes the motor direction.
- * If the motor direction was already set to "forward", the method will not affect any change. 
+ * @brief Sets the speed of the front right motor to the desired value
+ *
+ * @param speed specify the motor speed between 0 (slowest speed) and 255 (full speed), or 0 to deactivate the motors.
  */
-void rightForward(){
-    digitalWrite(RIGHT_ENGINE_FORWARD_PIN, HIGH);
-    digitalWrite(RIGHT_ENGINE_REVERSE_PIN, LOW);
-}
+void frontLeftSpeed(int speed);
+
+/**
+ * @brief Sets the speed of the rear right motor to the desired value
+ *
+ * @param speed specify the motor speed between 0 (slowest speed) and 255 (full speed), or 0 to deactivate the motors.
+ */
+void rearLeftSpeed(int speed);
+
+/**
+ * @brief Sets the speed of the front left motor to the desired value
+ *
+ * @param speed specify the motor speed between 0 (slowest speed) and 255 (full speed), or 0 to deactivate the motors.
+ */
+void frontRightSpeed(int speed);
+
+/**
+ * @brief Sets the speed of the rear left motor to the desired value
+ *
+ * @param speed specify the motor speed between 0 (slowest speed) and 255 (full speed), or 0 to deactivate the motors.
+ */
+void rearRightSpeed(int speed);
 
 /**
  * @brief Sets the dc motor direction of the right motors to "reverse".
- * 
+ *
+ * If the motor direction is currently set to "reverse", this method changes the motor direction.
+ * If the motor direction was already set to "forward", the method will not affect any change.
+ */
+void rightForward();
+
+/**
+ * @brief Sets the dc motor direction of the right motors to "reverse".
+ *
  * If the motor direction is currently set to "forward", this method changes the motor direction.
  * If the motor direction was already set to "reverse", the method will not affect any change.
  */
-void rightReverse(){
-    digitalWrite(RIGHT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(RIGHT_ENGINE_REVERSE_PIN, HIGH);
-}
+void rightReverse();
 
 /**
  * @brief Sets the speed of the right motors to the desired value.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void rightSpeed(int speed){
-    analogWrite(RIGHT_ENGINE_SPEED_PIN, speed);
-}
+void rightSpeed(int speed);
 
 /**
  * @brief Sets the dc motor direction of the left motors to "forward".
- * 
+ *
  * If the motor direction is currently set to "reverse", this method changes the motor direction.
  * If the motor direction was already set to "forward", the method will not affect any change.
  */
-void leftForward(){
-    digitalWrite(LEFT_ENGINE_FORWARD_PIN, HIGH);
-    digitalWrite(LEFT_ENGINE_REVERSE_PIN, LOW);
-}
+void leftForward();
 
 /**
  * @brief Sets the dc motor direction of the left motors to "reverse".
- * 
+ *
  * If the motor direction is currently set to "forward", this method changes the motor direction.
  * If the motor direction was already set to "reverse", the method will not affect any change.
  */
-void leftReverse(){
-    digitalWrite(LEFT_ENGINE_FORWARD_PIN, LOW);
-    digitalWrite(LEFT_ENGINE_REVERSE_PIN, HIGH);
-}
+void leftReverse();
+
+/**
+ * @brief Stops the dc motor on the right side to be shorted thus stopping them immediately
+ */
+void rightStop();
+
+/**
+ * @brief Stops the dc motor on the left side to be shorted thus stopping them immediately
+ */
+void leftStop();
 
 /**
  * @brief Sets the speed of the left motors to the desired value.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void leftSpeed(int speed){
-    analogWrite(LEFT_ENGINE_SPEED_PIN, speed);
-}
+void leftSpeed(int speed);
 
 /**
  * @brief Sets the speed of all motors to the desired value.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void setSpeed(int speed){
-    leftSpeed(speed);
-    rightSpeed(speed);
-}
+void setSpeed(int speed);
 
 /**
  * @brief Makes the car stop by deactivating all motors.
- * 
+ *
  */
-void stop(){
-    setSpeed(0);
-}
+void stop();
 
 /**
  * @brief Sets the movement direction of all motors to "forward".
- * 
+ *
  * If the motor direction is currently set to "reverse", this method changes the motor direction.
  * If the motor direction was already set to "forward", the method will not affect any change.
  */
-void forward(){
-    leftForward();
-    rightForward();
-}
+void forward();
 
 /**
  * @brief Sets the movement direction of all motors to "forward" AND sets the motor speed.
- * 
+ *
  * If the motor direction is currently set to "reverse", this method changes the motor direction.
  * If the motor direction was already set to "forward", the method will not affect any change.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void driveForward(int speed){
-    setSpeed(speed);
-    forward();
-}
+void driveForward(int speed);
 
 /**
  * @brief Sets the dc motor direction of all motors to "reverse".
- * 
+ *
  * If the motor direction is currently set to "forward", this method changes the motor direction.
  * If the motor direction was already set to "reverse", the method will not affect any change.
  */
-void reverse(){
-    leftReverse();
-    rightReverse();
-}
+void reverse();
 
 /**
  * @brief Sets the movement direction of all motors to "reverse" AND sets the motor speed.
- * 
+ *
  * If the motor direction is currently set to "forward", this method changes the motor direction.
  * If the motor direction was already set to "reverse", the method will not affect any change.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void driveReverse(int speed){
-    setSpeed(speed);
-    reverse();
-}
+void driveReverse(int speed);
 
 /**
  * @brief Turns the car left if driving forward.
- * 
+ *
  * More specifically: the right motors are set to "forward" and the left motors to "reverse".
  */
-void turnLeft(){
-    rightForward();
-    leftReverse();
-}
+void turnLeft();
 
 /**
  * @brief Turns the car left with the desired speed.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void turnLeftForward(int speed){
-    setSpeed(speed);
-    turnLeft();
-}
+void turnLeftForward(int speed);
 
 /**
  * @brief Turns the car right if driving forward.
- * 
+ *
  * More specifically: the right motors are set to "reverse" and the left motors to "forward".
  */
-void turnRight(){
-    leftForward();
-    rightReverse();
-}
+void turnRight();
 
 /**
  * @brief Turns the car right with the desired speed.
- * 
+ *
  * @param speed specify the motor speed between 60 (slowest moving speed) and 255 (full speed), or 0 to deactivate the motors.
- * 
- * The operation controls the motors my sending PMW signals to the L298N motor controller. 
+ *
+ * The operation controls the motors my sending PMW signals to the L298N motor controller.
  * A value between 0-59 is not recommended, because the motors to not get enough power to move the car.
  */
-void turnRightForward(int speed){
-    setSpeed(speed);
-    turnRight();
-}
+void turnRightForward(int speed);
 
-void steerLeftForward(int speed, double fraction){
-    forward();
-    leftSpeed(speed/fraction);
-    rightSpeed(speed);
-}
+void steerLeftForward(int speed, double fraction);
 
-void steerRightForward(int speed, double fraction){
-    forward();
-    leftSpeed(speed);
-    rightSpeed(speed/fraction);
-}
+void steerRightForward(int speed, double fraction);
+
+#endif

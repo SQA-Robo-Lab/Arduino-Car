@@ -6,14 +6,16 @@
 
 #include "Arduino.h"
 
+#ifndef DISTANCE_SENSOR_C
+#define DISTANCE_SENSOR_C
+
 // The digital pins used for the Arduino Car.
 #define FRONT_TRIGGER_PIN 26
-#define FRONT_ECHO_PIN 27
+#define FRONT_ECHO_PIN 18
 #define REAR_TRIGGER_PIN 24
 #define REAR_ECHO_PIN 25
 // The time after which pulseIn will stop waiting. Can't be 0 to avoid the program crashing
 #define ECHO_TIMEOUT_US 10000
-
 
 /**
  * @brief Initializes the distance sensors. MUST be called once before the other methods are effective.
@@ -36,9 +38,9 @@ void initializeDistanceSensors(){
  * 
  * @param duration: the duration the signal travels in micro-seconds
  */
-int calculateDistanceInCm(long duration){
+uint16_t calculateDistanceInCm(unsigned long duration){
     if (duration == 0) {
-        return ECHO_TIMEOUT_US * 0.0343;
+        return (ECHO_TIMEOUT_US / 2) * 0.0343;
     } else {
         return (duration / 2) * 0.0343;
     }
@@ -49,7 +51,7 @@ int calculateDistanceInCm(long duration){
  * 
  * @return the measured distance in cm
  */
-int getFrontDistance(){
+uint16_t getFrontDistance(){
     //clear the trigger pin
     digitalWrite(FRONT_TRIGGER_PIN, LOW);
     delayMicroseconds(5);
@@ -59,7 +61,6 @@ int getFrontDistance(){
     //stop the trigger
     digitalWrite(FRONT_TRIGGER_PIN, LOW);
 
-    //measure the echo duration
     int duration = pulseIn(FRONT_ECHO_PIN, HIGH, ECHO_TIMEOUT_US);
 
     return calculateDistanceInCm(duration);
@@ -71,7 +72,7 @@ int getFrontDistance(){
  * 
  * @return the measured distance in cm
  */
-int getRearDistance(){
+uint16_t getRearDistance(){
     //clear the trigger pin
     digitalWrite(REAR_TRIGGER_PIN, LOW);
     delayMicroseconds(5);
@@ -86,3 +87,5 @@ int getRearDistance(){
 
     return calculateDistanceInCm(duration);
 }
+
+#endif
