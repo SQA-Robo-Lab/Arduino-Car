@@ -28,7 +28,7 @@ char* overtakeRequest = "REQUEST_OVERTAKING";
 char* approveOvertaking = "APPROVE_OVERTAKING";
 char* cancelIllegal = "CANCEL_ILLEGAL";
 char* finishedOvertaking = "FINISHED_OVERTAKING";
-uint8_t overtakingState = 0; //0: normal, 1: requested overtaking, 2: requested overtaking approved, 3: being overtaken requested+appoved, 4: being overtaken active
+uint8_t overtakingState = 0; //0: normal, 1: requested overtaking, 2: requested overtaking approved, 3: being overtaken requested+appoved
 #endif
 
 boolean drivingAllowed = true;
@@ -115,7 +115,27 @@ void loop()
         #ifdef DO_OVERTAKE_REQUEST
             if (overtakingState == 2) {
                 //handle overtaking
+            } else if (overtakingState == 3) {
+                Serial.println("Approved overtake request. Stopping");
+                stop();
             } else {
+                if (d < 20) {
+                    if (overtakingState == 0) {
+                        sendI2CMessage(overtakeRequest);
+                        overtakingState = 1;
+                        Serial.println("Less than 20cm. Sent overtake request. Slowing until approved.");
+                        followLine(baseSpeed/2);
+                    } else if (overtakingState == 2) {
+                        Serial.println("Overtaking was approved, stopping as not implemented.");
+                        stop();
+                    } else if (overtakingState == 1) {
+                        if (d < 10) {
+                            stop();
+                        } else {
+                            followLine(baseSpeed/2);
+                        }
+                    }
+                } else {
         #endif
         if (d < 10)
         {
@@ -125,30 +145,12 @@ void loop()
         {
             stop();
         }
-        #ifdef DO_OVERTAKE_REQUEST
-            else if (overtakingState == 3) {
-                Serial.println("Approved overtake request. Stopping");
-                stop();
-            }
-            else if (d < 20) {
-                if (overtakingState == 0) {
-                    sendI2CMessage(overtakeRequest);
-                    overtakingState = 1;
-                    Serial.println("Less than 20cm. Sent overtake request. Slowing until approved.");
-                    followLine(baseSpeed/2);
-                } else if (overtakingState == 2) {
-                    Serial.println("Overtaking was approved, stopping as not implemented.");
-                    stop();
-                } else if (overtakingState == 1) {
-                    followLine(baseSpeed/2);
-                }
-            }
-        #endif
         else
         {
             followLine(baseSpeed);
         }
         #ifdef DO_OVERTAKE_REQUEST
+                }
             }
         #endif
     #endif
