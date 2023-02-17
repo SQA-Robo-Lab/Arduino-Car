@@ -29,6 +29,8 @@ public:
         uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm, uint8_t maxSteeringLeftAngle, uint8_t maxSteeringRightAngle);
     ~TurnSteeringDriveController(){};
 
+    void loop() override;
+
 protected:
     void setSpeedInternal(int16_t speed) override;
     void setAngleInternal(int8_t angle) override;

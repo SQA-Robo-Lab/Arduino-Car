@@ -13,16 +13,19 @@ void DriveController::drive(int8_t angle, int16_t speed)
 void DriveController::pause()
 {
     this->setSpeedInternal(0);
+    this->state = DRIVE_CONTROLLER_STATE_PAUSED;
 }
 void DriveController::resume()
 {
-    this->setSpeedInternal(speed);
+    this->setSpeedInternal(this->speed);
+    this->state = this->speed == 0 ? DRIVE_CONTROLLER_STATE_STOPPED : DRIVE_CONTROLLER_STATE_DRIVING;
 }
 
 void DriveController::setSpeed(int16_t speed)
 {
     this->speed = speed;
     this->setSpeedInternal(speed);
+    this->state = this->speed == 0 ? DRIVE_CONTROLLER_STATE_STOPPED : DRIVE_CONTROLLER_STATE_DRIVING;
 }
 void DriveController::setAngle(int8_t angle)
 {
@@ -32,7 +35,7 @@ void DriveController::setAngle(int8_t angle)
 
 int16_t DriveController::getSpeed()
 {
-    return this->speed;
+    return this->state == DRIVE_CONTROLLER_STATE_DRIVING ? this->speed : 0;
 }
 int8_t DriveController::getAngle()
 {
