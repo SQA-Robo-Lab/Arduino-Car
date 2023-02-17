@@ -2,7 +2,6 @@
 #define MOTOR_PROFILE_HPP
 
 #include "Arduino.h"
-#include <initializer_list>
 
 struct MotorKnownRpm
 {
@@ -10,18 +9,28 @@ struct MotorKnownRpm
     uint16_t rpm;
 };
 
+enum MotorCurveLutType
+{
+    MOTOR_CURVE_TYPE_NONE,
+    MOTOR_CURVE_TYPE_RAM,
+    MOTOR_CURVE_TYPE_RAM_ALLOCATED,
+#ifdef ARDUINO_ARCH_AVR
+    MOTOR_CURVE_TYPE_PROGMEM
+#endif
+};
+
 class MotorProfile
 {
 protected:
-    float *motorCurveCoefficients;
-    uint8_t coefficientsSize = 0;
+    uint16_t *rpmLut = nullptr;
+    MotorCurveLutType rpmLutType = MOTOR_CURVE_TYPE_NONE;
     uint16_t wheelCircumfrence = 1;
 
     uint8_t rpmToSpeed(uint16_t rpm);
 
 public:
-    MotorProfile();
-    ~MotorProfile(){};
+    MotorProfile(uint16_t wheelCircumfrence = 1);
+    ~MotorProfile();
 
     void setSpeedRatio(uint8_t speed);
     void setSpeedRPM(uint16_t rpm);
@@ -30,6 +39,7 @@ public:
     uint16_t getMaxRpm();
 
     void calculateMotorCurve(struct MotorKnownRpm points[], uint8_t len);
+    void setMotorCurve(uint16_t *lut, MotorCurveLutType type);
 };
 
 #endif
