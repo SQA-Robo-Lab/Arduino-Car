@@ -11,6 +11,8 @@ MotorDcHBridge::MotorDcHBridge(MotorSpeedUnit speedUnit, uint8_t speedEnablePin,
 
 void MotorDcHBridge::setSpeedRatioInternal(int16_t speedRatio)
 {
+    Serial.print("Settting ratio to ");
+    Serial.println(speedRatio);
     if (speedRatio == 0)
     {
         digitalWrite(this->polarityPin1, 0);
@@ -23,12 +25,13 @@ void MotorDcHBridge::setSpeedRatioInternal(int16_t speedRatio)
         {
             digitalWrite(this->polarityPin1, 0);
             digitalWrite(this->polarityPin2, 1);
+            analogWrite(this->speedPin, min(255, max(0, -speedRatio)));
         }
         else
         {
             digitalWrite(this->polarityPin1, 1);
             digitalWrite(this->polarityPin2, 0);
+            analogWrite(this->speedPin, min(255, max(0, speedRatio)));
         }
-        analogWrite(this->speedPin, min(255, max(-255, speedPin)));
     }
 }

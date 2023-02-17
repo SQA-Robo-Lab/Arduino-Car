@@ -10,10 +10,13 @@ TurnSteeringDriveController::TurnSteeringDriveController(
 
 void TurnSteeringDriveController::setSpeedInternal(int16_t speed)
 {
+    Serial.print("Settting internal speed to ");
+    Serial.println(speed);
     if (this->angle == 0)
     {
         this->rearLeft.setSpeed(speed);
         this->rearRight.setSpeed(speed);
+        return;
     }
 
     float innerRadius = tan((90.0 - abs(this->angle)) * PI / 180.0) * this->carLengthMm;

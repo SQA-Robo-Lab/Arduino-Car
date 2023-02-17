@@ -12,6 +12,8 @@ void Motor::setProfile(MotorProfile *profile)
 
 void Motor::setSpeed(int32_t speed)
 {
+    Serial.print("Settting speed to ");
+    Serial.println(speed);
     switch (this->unit)
     {
     case MOTOR_SPEED_UNIT_RPM:
