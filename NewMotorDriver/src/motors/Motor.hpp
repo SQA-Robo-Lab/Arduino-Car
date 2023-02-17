@@ -1,7 +1,6 @@
 #ifndef MOTOR_HPP
 #define MOTOR_HPP
 
-#include "Arduino.h"
 #include "MotorProfile.hpp"
 
 enum MotorSpeedUnit
@@ -30,7 +29,7 @@ public:
     void loop(){};
 
 protected:
-    virtual void setSpeedRatioInternal(int16_t speedRatio);
+    virtual void setSpeedRatioInternal(int16_t speedRatio) = 0;
 };
 
 #endif

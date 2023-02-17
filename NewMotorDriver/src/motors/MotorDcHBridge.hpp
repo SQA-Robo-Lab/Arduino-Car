@@ -14,7 +14,7 @@ public:
     MotorDcHBridge(MotorSpeedUnit speedUnit, uint8_t speedEnablePin, uint8_t polarityDirectionPin1, uint8_t polarityDirectionPin2);
 
 protected:
-    void setSpeedRatioInternal(int16_t speedRatio);
+    void setSpeedRatioInternal(int16_t speedRatio) override;
 };
 
 #endif

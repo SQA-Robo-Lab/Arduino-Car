@@ -15,9 +15,9 @@ struct ServoMotor
 class TurnSteeringDriveController : public DriveController
 {
 private:
-    Motor rearLeft;
-    Motor rearRight;
-    Servo servo;
+    Motor &rearLeft;
+    Motor &rearRight;
+    Servo &servo;
     uint8_t carWidthMm;
     uint8_t carLengthMm;
     uint8_t maxLeftAngle;
@@ -25,13 +25,13 @@ private:
 
 public:
     TurnSteeringDriveController(
-        Motor rearLeftMotor, Motor rearRightMotor, Servo steering,
+        Motor &rearLeftMotor, Motor &rearRightMotor, Servo &steering,
         uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm, uint8_t maxSteeringLeftAngle, uint8_t maxSteeringRightAngle);
     ~TurnSteeringDriveController(){};
 
 protected:
-    void setSpeedInternal(int16_t speed);
-    void setAngleInternal(int8_t angle);
+    void setSpeedInternal(int16_t speed) override;
+    void setAngleInternal(int8_t angle) override;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "Motor.hpp"
+#include "Arduino.h"
 
 Motor::Motor(MotorSpeedUnit speedUnit)
 {
@@ -23,7 +24,7 @@ void Motor::setSpeed(int32_t speed)
     default:
         if (this->profile == nullptr)
         {
-            this->setSpeedRatioInternal(speed);
+            this->setSpeedRatioInternal(static_cast<int16_t>(speed));
         }
         else
         {
