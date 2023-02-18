@@ -44,3 +44,11 @@ void Motor::setSpeed(int32_t speed)
     }
     this->setSpeedRatioInternal(min(255, max(-255, speedRatio)));
 }
+
+void Motor::loop()
+{
+    if (this->profile != nullptr)
+    {
+        profile->loop();
+    }
+}

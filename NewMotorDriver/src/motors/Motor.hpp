@@ -26,7 +26,7 @@ public:
     void setProfile(MotorProfile *profile);
     void setSpeed(int32_t speed);
 
-    void loop(){};
+    void loop();
 
 protected:
     virtual void setSpeedRatioInternal(int16_t speedRatio) = 0;
