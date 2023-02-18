@@ -1,6 +1,8 @@
 #include "Motor.hpp"
 #include "Arduino.h"
 
+// #define MOTOR_DEBUG
+
 Motor::Motor(MotorSpeedUnit speedUnit)
     : unit(speedUnit)
 {
@@ -20,10 +22,12 @@ void Motor::setSpeed(int32_t speed)
         if (this->profile != nullptr)
         {
             speedRatio = this->profile->rpmToRatio(speed);
+#ifdef MOTOR_DEBUG
             Serial.print("Translated rpm ");
             Serial.print(speed);
             Serial.print(" into ratio ");
             Serial.println(speedRatio);
+#endif
         }
         break;
     case MOTOR_SPEED_UNIT_CM_PER_SEC:
@@ -31,8 +35,10 @@ void Motor::setSpeed(int32_t speed)
         break;
     case MOTOR_SPEED_UNIT_RATIO:
     default:
+#ifdef MOTOR_DEBUG
         Serial.print("Settting speed to ");
         Serial.println(speed);
+#endif
         speedRatio = static_cast<int16_t>(speed);
         break;
     }

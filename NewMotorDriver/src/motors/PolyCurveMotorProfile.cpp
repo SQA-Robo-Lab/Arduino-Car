@@ -1,6 +1,6 @@
 #include "PolyCurveMotorProfile.hpp"
 
-#define POLY_CURVE_BIN_SEARCH_DEBUG
+// #define POLY_CURVE_BIN_SEARCH_DEBUG
 
 void polynomialRegression(float xList[], float yList[], uint8_t len, float *solution)
 {

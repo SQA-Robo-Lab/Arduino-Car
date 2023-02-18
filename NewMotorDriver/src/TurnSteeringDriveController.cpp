@@ -10,8 +10,6 @@ TurnSteeringDriveController::TurnSteeringDriveController(
 
 void TurnSteeringDriveController::setSpeedInternal(int16_t speed)
 {
-    Serial.print("Settting internal speed to ");
-    Serial.println(speed);
     if (this->angle == 0)
     {
         this->rearLeft.setSpeed(speed);
