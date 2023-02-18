@@ -15,6 +15,7 @@ typedef enum
     LEFT_OF_LINE,
     ON_LINE,
     RIGHT_OF_LINE,
+    LINE_POSITION_UNKNOWN
 } LinePosition;
 
 class LineDetector
@@ -25,6 +26,8 @@ public:
     ~LineDetector(){};
 
     LinePosition getLegacyPosition();
+    LinePosition positionToLegacy(int8_t pos, int8_t angle);
+
     virtual int8_t getLinePositionMm() = 0;
     virtual int8_t getLineAngle() = 0;
 };

@@ -1,7 +1,7 @@
 #include "BrightnessSensorDigital.hpp"
 
-BrightnessSensorDigital::BrightnessSensorDigital(uint8_t *pinNumbers, uint8_t numberOfPins, bool invert, bool pullup)
-    : pinsLen(numberOfPins), inverted(invert)
+BrightnessSensorDigital::BrightnessSensorDigital(uint8_t *pinNumbers, uint8_t numberOfPins, bool pullup)
+    : pinsLen(numberOfPins)
 {
     this->pins = new uint8_t[numberOfPins];
     memcpy(this->pins, pinNumbers, numberOfPins);
@@ -20,7 +20,7 @@ uint8_t BrightnessSensorDigital::getValues(uint8_t *array, uint8_t maxLen)
     uint16_t i = 0;
     for (; i < this->pinsLen && i < maxLen; i++)
     {
-        if (digitalRead(this->pins[i]) xor this->inverted)
+        if (digitalRead(this->pins[i]))
         {
             array[i] = 255;
         }

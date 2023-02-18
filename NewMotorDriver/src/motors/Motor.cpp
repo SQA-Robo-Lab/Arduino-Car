@@ -29,6 +29,10 @@ void Motor::setSpeed(int32_t speed)
             Serial.println(speedRatio);
 #endif
         }
+        else
+        {
+            speedRatio = static_cast<int16_t>(speed);
+        }
         break;
     case MOTOR_SPEED_UNIT_CM_PER_SEC:
         // todo: implement translation using profile

@@ -13,10 +13,12 @@ private:
     uint8_t sensorsLen;
     uint8_t totalSensors;
     uint8_t sensorDistance;
+    bool invert;
+    uint8_t brightnessThrethold;
 
 public:
-    LinearSensorLineDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm);
-    LinearSensorLineDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm);
+    LinearSensorLineDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm, uint8_t minBrightnessThrethold, bool invertVals = false);
+    LinearSensorLineDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm, uint8_t minBrightnessThrethold, bool invertVals = false);
     ~LinearSensorLineDetector();
 
     int8_t getLinePositionMm() override;

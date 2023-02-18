@@ -1,10 +1,10 @@
 #include "TurnSteeringDriveController.hpp"
 
 TurnSteeringDriveController::TurnSteeringDriveController(
-    Motor &rearLeftMotor, Motor &rearRightMotor, Servo &steering,
-    uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm, uint8_t maxSteeringLeftAngle, uint8_t maxSteeringRightAngle)
-    : rearLeft(rearLeftMotor), rearRight(rearRightMotor), servo(steering),
-      carWidthMm(wheelDistanceWidthMm), carLengthMm(wheelDistanceLengthMm), maxLeftAngle(maxSteeringLeftAngle), maxRightAngle(maxSteeringRightAngle)
+    Motor &rearLeftMotor, Motor &rearRightMotor, SteerableAxle &steeringMotor,
+    uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm)
+    : rearLeft(rearLeftMotor), rearRight(rearRightMotor), steering(steeringMotor),
+      carWidthMm(wheelDistanceWidthMm), carLengthMm(wheelDistanceLengthMm)
 {
 }
 
@@ -35,7 +35,7 @@ void TurnSteeringDriveController::setSpeedInternal(int16_t speed)
 
 void TurnSteeringDriveController::setAngleInternal(int8_t angle)
 {
-    this->servo.write(map(angle, (-1) * ((int16_t)this->maxLeftAngle), this->maxRightAngle, 0, 180));
+    this->steering.setAngle(angle);
     this->setSpeedInternal(this->getSpeed());
 }
 

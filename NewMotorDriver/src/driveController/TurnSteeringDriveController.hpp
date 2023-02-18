@@ -3,7 +3,7 @@
 
 #include "DriveController.hpp"
 #include "../motors/Motor.hpp"
-#include "Servo.h"
+#include "../motors/SteerableAxle.hpp"
 
 struct ServoMotor
 {
@@ -17,16 +17,14 @@ class TurnSteeringDriveController : public DriveController
 private:
     Motor &rearLeft;
     Motor &rearRight;
-    Servo &servo;
+    SteerableAxle &steering;
     uint8_t carWidthMm;
     uint8_t carLengthMm;
-    uint8_t maxLeftAngle;
-    uint8_t maxRightAngle;
 
 public:
     TurnSteeringDriveController(
-        Motor &rearLeftMotor, Motor &rearRightMotor, Servo &steering,
-        uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm, uint8_t maxSteeringLeftAngle, uint8_t maxSteeringRightAngle);
+        Motor &rearLeftMotor, Motor &rearRightMotor, SteerableAxle &steeringMotor,
+        uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm);
     ~TurnSteeringDriveController(){};
 
     void loop() override;

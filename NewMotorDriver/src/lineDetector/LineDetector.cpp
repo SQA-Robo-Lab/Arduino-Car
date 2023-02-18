@@ -4,13 +4,11 @@ LineDetector::LineDetector()
 {
 }
 
-LinePosition LineDetector::getLegacyPosition()
+LinePosition LineDetector::positionToLegacy(int8_t pos, int8_t angle)
 {
-    int8_t pos = this->getLinePositionMm();
-    int8_t angle = this->getLineAngle();
     if (pos == LINE_DETECTOR_NO_LINE_FOUND || angle == LINE_DETECTOR_NO_LINE_FOUND)
     {
-        return ON_LINE; // todo: fix legacy
+        return LINE_POSITION_UNKNOWN; // todo: fix legacy
     }
     if (pos > LINE_POSITION_THRESHOLD_HIGH)
     {
@@ -59,4 +57,11 @@ LinePosition LineDetector::getLegacyPosition()
         return RIGHT_OF_LINE;
     }
     return ON_LINE;
+}
+
+LinePosition LineDetector::getLegacyPosition()
+{
+    int8_t pos = this->getLinePositionMm();
+    int8_t angle = this->getLineAngle();
+    return this->positionToLegacy(pos, angle);
 }
