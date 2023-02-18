@@ -7,7 +7,7 @@ BrightnessSensorDigital::BrightnessSensorDigital(uint8_t *pinNumbers, uint8_t nu
     memcpy(this->pins, pinNumbers, numberOfPins);
     for (uint16_t i = 0; i < numberOfPins; i++)
     {
-        pinMode(this->pins[i], pullup ? INPUT : INPUT_PULLUP);
+        pinMode(this->pins[i], pullup ? INPUT_PULLUP : INPUT);
     }
 }
 BrightnessSensorDigital::~BrightnessSensorDigital()

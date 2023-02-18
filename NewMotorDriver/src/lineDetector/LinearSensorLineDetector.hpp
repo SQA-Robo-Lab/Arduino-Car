@@ -4,6 +4,8 @@
 #include "LineDetector.hpp"
 #include "brightnessSensor/BrightnessSensor.hpp"
 
+#define BRIGHTNESS_SENSOR_THRETHOLD 20
+
 class LinearSensorLineDetector : public LineDetector
 {
 private:

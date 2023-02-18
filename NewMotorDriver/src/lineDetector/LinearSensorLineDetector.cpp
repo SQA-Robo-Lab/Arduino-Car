@@ -31,18 +31,25 @@ int8_t LinearSensorLineDetector::getLinePositionMm()
     {
         nextIndex += this->sensors[i]->getValues(values + nextIndex, this->totalSensors - nextIndex);
     }
-    uint8_t maxValue = 0;
-    uint32_t maxSensorIndex = -1;
+    uint8_t maxValue = BRIGHTNESS_SENSOR_THRETHOLD;
+    int32_t maxSensorIndex = -1;
     for (nextIndex = 0; nextIndex < this->totalSensors; nextIndex++)
     {
-        if (values[nextIndex] > maxValue)
+        if (values[nextIndex] >= maxValue)
         {
             maxSensorIndex = nextIndex;
             maxValue = values[nextIndex];
         }
     }
 
-    return maxSensorIndex * this->sensorDistance - (this->totalSensors * this->sensorDistance) / 2;
+    if (maxSensorIndex == -1)
+    {
+        return LINE_DETECTOR_NO_LINE_FOUND;
+    }
+    else
+    {
+        return maxSensorIndex * this->sensorDistance - ((this->totalSensors - 1) * this->sensorDistance) / 2;
+    }
 }
 
 int8_t LinearSensorLineDetector::getLineAngle()

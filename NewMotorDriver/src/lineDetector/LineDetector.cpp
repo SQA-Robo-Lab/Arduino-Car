@@ -8,6 +8,10 @@ LinePosition LineDetector::getLegacyPosition()
 {
     int8_t pos = this->getLinePositionMm();
     int8_t angle = this->getLineAngle();
+    if (pos == LINE_DETECTOR_NO_LINE_FOUND || angle == LINE_DETECTOR_NO_LINE_FOUND)
+    {
+        return ON_LINE; // todo: fix legacy
+    }
     if (pos > LINE_POSITION_THRESHOLD_HIGH)
     {
         return LEFT_OF_LINE;

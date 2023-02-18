@@ -2,7 +2,7 @@
 #define TURN_STEERING_DRIVE_CONTROLLER_HPP
 
 #include "DriveController.hpp"
-#include "motors/Motor.hpp"
+#include "../motors/Motor.hpp"
 #include "Servo.h"
 
 struct ServoMotor
