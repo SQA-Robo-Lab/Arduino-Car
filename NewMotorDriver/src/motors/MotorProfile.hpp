@@ -3,43 +3,25 @@
 
 #include "Arduino.h"
 
-struct MotorKnownRpm
-{
-    uint8_t speed;
-    uint16_t rpm;
-};
-
-enum MotorCurveLutType
-{
-    MOTOR_CURVE_TYPE_NONE,
-    MOTOR_CURVE_TYPE_RAM,
-    MOTOR_CURVE_TYPE_RAM_ALLOCATED,
-#ifdef ARDUINO_ARCH_AVR
-    MOTOR_CURVE_TYPE_PROGMEM
-#endif
-};
-
 class MotorProfile
 {
 protected:
-    uint16_t *rpmLut = nullptr;
-    MotorCurveLutType rpmLutType = MOTOR_CURVE_TYPE_NONE;
-    uint16_t wheelCircumfrence = 1;
-
-    uint8_t rpmToSpeed(uint16_t rpm);
+    uint16_t clipRpmForward = 0;
+    uint16_t clipRpmBackward = 0;
 
 public:
-    MotorProfile(uint16_t wheelCircumfrence = 1);
-    ~MotorProfile();
+    MotorProfile();
+    ~MotorProfile() {}
 
-    void setSpeedRatio(uint8_t speed);
-    void setSpeedRPM(uint16_t rpm);
-    void setSpeedCmPerSec(uint16_t cmps);
+    virtual int16_t rpmToRatio(int16_t rpm) = 0;
 
-    uint16_t getMaxRpm();
+    virtual uint16_t getMaxPossibleRpmForward() = 0;
+    virtual uint16_t getMaxPossibleRpmBackward() = 0;
 
-    void calculateMotorCurve(struct MotorKnownRpm points[], uint8_t len);
-    void setMotorCurve(uint16_t *lut, MotorCurveLutType type);
+    void setMaxRpmForward(uint16_t rpm);
+    void setMaxRpmBackward(uint16_t rpm);
+
+    void loop(){};
 };
 
 #endif
