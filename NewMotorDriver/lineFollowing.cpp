@@ -53,21 +53,10 @@ void lineFollowing(DriveController &dc, LineDetector &ld)
         dc.resume();
     }
 
-    LinePosition lp = ld.getLegacyPosition();
+    int8_t lp = ld.getLinePositionMm();
 
-    if (lp == ON_LINE)
+    if (lp != LINE_DETECTOR_NO_LINE_FOUND)
     {
-        dc.setAngle(0);
-    }
-    else if (lp == LEFT_OF_LINE)
-    {
-        dc.setAngle(30);
-    }
-    else if (lp == RIGHT_OF_LINE)
-    {
-        dc.setAngle(-30);
-    }
-    else
-    {
+        dc.setAngle(lp * 30 / 16);
     }
 }

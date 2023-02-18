@@ -23,10 +23,34 @@ TurnSteeringDriveController dc(
     120,
     100);
 
+// left: weiß: 224-225, tape: 221-224, schwarz: 240-244, schwarzTape: 234-236 => min: 221, max: 244 => offset: 13, factor:
+// middle: weiß: 208-210, tape: 211-213, schwarz: 234-240, schwarzTape: 222-230 => min: 208, max: 240 => offset: 0, factor: 1
+// right: weiß: 229-230, tape: 226-228, schwarz: 240-246, schwarzTape: 239-241 => min: 226, max: 246 => offset: 18, factor:
 uint8_t pins[] = {A0, A1, A2};
+MappingFunction mappingFns[] = {
+    [](uint8_t val)
+    {
+        Serial.print("Left: ");
+        long after = map(val, 11, 34, 15, 47);
+        Serial.println(after);
+        return static_cast<uint8_t>(after);
+    },
+    [](uint8_t val)
+    {
+        Serial.print("Middle: ");
+        Serial.println(val);
+        return val;
+    },
+    [](uint8_t val)
+    {
+        Serial.print("Right: ");
+        long after = map(val, 9, 29, 15, 47);
+        Serial.println(after);
+        return static_cast<uint8_t>(after);
+    }};
 BrightnessSensorAnalog sensor(pins, 3);
 
-LinearSensorLineDetector ld(sensor, 20, 234, true);
+LinearSensorLineDetector ld(sensor, 16, 47, 19);
 
 void setup()
 { // middle: 66, right: 109, left: 19
@@ -35,7 +59,8 @@ void setup()
     // rearRight.setProfile(&profile);
     Serial.begin(115200);
     Serial.println("Started");
-    dc.setSpeed(64);
+    dc.setSpeed(70);
+    sensor.setTranslationFunctions(mappingFns);
 }
 
 void loop()
@@ -118,12 +143,12 @@ void loop()
 
     dc.loop();
 
-    /*int8_t pos = ld.getLinePositionMm();
+    int8_t pos = ld.getLinePositionMm();
     int8_t angle = ld.getLineAngle();
     Serial.print("Detected line pos: ");
     Serial.print(pos);
     Serial.print("mm; Legacy: ");
-    Serial.println(ld.positionToLegacy(pos, angle));*/
+    Serial.println(ld.positionToLegacy(pos, angle));
 
     lineFollowing(dc, ld);
     delay(50);

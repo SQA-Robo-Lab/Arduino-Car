@@ -2,15 +2,15 @@
 
 #define LINE_SENSOR_DEBUG
 
-LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm, uint8_t minBrightnessThrethold, bool invertVals = false)
-    : sensorsLen(1), sensorDistance(sensorDistanceMm), invert(invertVals), brightnessThrethold(minBrightnessThrethold)
+LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm, uint8_t definetlyWhiteThrethold, uint8_t definetlyBlackThrethold)
+    : sensorsLen(1), sensorDistance(sensorDistanceMm), whiteThrethold(definetlyWhiteThrethold), blackThrethold(definetlyBlackThrethold)
 {
     this->sensors = new BrightnessSensor *[1];
     this->sensors[0] = &sensor;
     this->totalSensors = sensor.numberOfSensors();
 }
-LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm, uint8_t minBrightnessThrethold, bool invertVals = false)
-    : sensorsLen(numberOfSensors), sensorDistance(sensorDistanceMm), invert(invertVals), brightnessThrethold(minBrightnessThrethold)
+LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm, uint8_t definetlyWhiteThrethold, uint8_t definetlyBlackThrethold)
+    : sensorsLen(numberOfSensors), sensorDistance(sensorDistanceMm), whiteThrethold(definetlyWhiteThrethold), blackThrethold(definetlyBlackThrethold)
 {
     this->sensors = new BrightnessSensor *[numberOfSensors];
     memcpy(this->sensors, multipleSensors, numberOfSensors);
@@ -33,37 +33,67 @@ int8_t LinearSensorLineDetector::getLinePositionMm()
     {
         nextIndex += this->sensors[i]->getValues(values + nextIndex, this->totalSensors - nextIndex);
     }
-    uint8_t maxValue = this->brightnessThrethold;
-    int32_t maxSensorIndex = -1;
 
 #ifdef LINE_SENSOR_DEBUG
     Serial.print("Brigtness values: ");
 #endif
-    for (nextIndex = 0; nextIndex < this->totalSensors; nextIndex++)
+
+    int8_t pos = LINE_DETECTOR_NO_LINE_FOUND;
+    float maxVal = 0.2;
+    float lowerValForMax = 0;
+    uint8_t numLargerHalf = 0;
+
+    int16_t levelDiff = static_cast<int16_t>(this->blackThrethold) - static_cast<int16_t>(this->whiteThrethold);
+    float prevVal = (static_cast<float>(values[0]) - this->whiteThrethold) / levelDiff;
+    prevVal = min(1, max(0, prevVal));
+    if (prevVal > 0.5)
     {
-        uint8_t currVal = this->invert ? 255 - values[nextIndex] : values[nextIndex];
+        numLargerHalf++;
+    }
+#ifdef LINE_SENSOR_DEBUG
+    Serial.print(prevVal);
+    Serial.print("; ");
+#endif
+
+    for (nextIndex = 1; nextIndex < this->totalSensors; nextIndex++)
+    {
+        float currVal = (static_cast<float>(values[nextIndex]) - this->whiteThrethold) / levelDiff;
+        currVal = min(1, max(0, currVal));
+
 #ifdef LINE_SENSOR_DEBUG
         Serial.print(currVal);
         Serial.print("; ");
 #endif
-        if (currVal >= maxValue)
+
+        if (currVal > 0.5)
         {
-            maxSensorIndex = nextIndex;
-            maxValue = currVal;
+            numLargerHalf++;
         }
+
+        if (currVal > maxVal || prevVal > maxVal || (currVal == maxVal && prevVal > lowerValForMax) || (prevVal == maxVal && currVal > lowerValForMax))
+        {
+            if (currVal > prevVal)
+            {
+                maxVal = currVal;
+                lowerValForMax = prevVal;
+            }
+            else
+            {
+                maxVal = prevVal;
+                lowerValForMax = currVal;
+            }
+            float largerVal = max(currVal, prevVal);
+            float ratio = ((currVal / largerVal) - (prevVal / largerVal) + 1) / 2;
+            pos = floor((ratio + (nextIndex - 1) - ((this->totalSensors - 1) / 2)) * this->sensorDistance);
+        }
+
+        prevVal = currVal;
     }
 #ifdef LINE_SENSOR_DEBUG
     Serial.println();
 #endif
 
-    if (maxSensorIndex == -1)
-    {
-        return LINE_DETECTOR_NO_LINE_FOUND;
-    }
-    else
-    {
-        return maxSensorIndex * this->sensorDistance - ((this->totalSensors - 1) * this->sensorDistance) / 2;
-    }
+    return pos;
 }
 
 int8_t LinearSensorLineDetector::getLineAngle()
