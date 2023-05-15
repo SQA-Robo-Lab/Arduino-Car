@@ -7,6 +7,8 @@
 #define REAR_ECHO_PIN 4
 #define ECHO_TIMEOUT_US 10000
 
+// #define QUADRATIC_STEERING
+
 uint16_t calculateDistanceInCm(unsigned long duration)
 {
     if (duration == 0)
@@ -57,6 +59,18 @@ void lineFollowing(DriveController &dc, LineDetector &ld)
 
     if (lp != LINE_DETECTOR_NO_LINE_FOUND)
     {
+#ifdef QUADRATIC_STEERING
+        long angle = lp;
+        angle = (30 * angle * angle) / 256;
+        if (lp < 0)
+        {
+            angle *= -1;
+        }
+        Serial.print("Setting angle to ");
+        Serial.println(angle);
+        dc.setAngle(angle);
+#else
         dc.setAngle(lp * 30 / 16);
+#endif
     }
 }
