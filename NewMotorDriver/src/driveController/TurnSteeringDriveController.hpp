@@ -5,13 +5,6 @@
 #include "../motors/Motor.hpp"
 #include "../motors/SteerableAxle.hpp"
 
-struct ServoMotor
-{
-    const uint8_t dataPin;
-    const uint8_t leftMaxAngle;
-    const uint8_t rightMaxAngle;
-};
-
 class TurnSteeringDriveController : public DriveController
 {
 private:
