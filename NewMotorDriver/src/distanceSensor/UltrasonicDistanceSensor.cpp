@@ -6,10 +6,6 @@ UltrasonicDistanceSensor::UltrasonicDistanceSensor(uint8_t triggerPin, uint8_t e
     this->timeoutUs = maxDistance * 1000 / SPEED_OF_SOUND_MM_PER_MSEC;
 }
 
-UltrasonicDistanceSensor::UltrasonicDistanceSensor(uint8_t triggerEchoPin, uint16_t maxDistance) : UltrasonicDistanceSensor(triggerEchoPin, triggerEchoPin, maxDistance)
-{
-}
-
 uint16_t UltrasonicDistanceSensor::echoTimeToMm(uint16_t echoTimeUs)
 {
     if (echoTimeUs == 0)
