@@ -10,6 +10,13 @@ FixedWheelDriveController::FixedWheelDriveController(
 {
 }
 
+FixedWheelDriveController::FixedWheelDriveController(
+    Motor &leftMotor, Motor &rightMotor,
+    uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm)
+    : FixedWheelDriveController(leftMotor, rightMotor, leftMotor, rightMotor, wheelDistanceWidthMm, wheelDistanceLengthMm)
+{
+}
+
 void FixedWheelDriveController::setSpeedInternal(int16_t speed)
 {
     if (this->angle == 0)

@@ -19,6 +19,9 @@ public:
         Motor &frontLeftMotor, Motor &frontRightMotor,
         Motor &rearLeftMotor, Motor &rearRightMotor,
         uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm);
+    FixedWheelDriveController(
+        Motor &leftMotor, Motor &rightMotor,
+        uint8_t wheelDistanceWidthMm, uint8_t wheelDistanceLengthMm);
     ~FixedWheelDriveController(){};
 
     void loop() override;
