@@ -8,8 +8,8 @@
 class DistanceSensor
 {
 public:
-    DistanceSensor();
-    ~DistanceSensor();
+    DistanceSensor(){};
+    ~DistanceSensor(){};
 
     virtual uint16_t getDistanceToClosestMm() = 0;
     virtual int8_t getAngleToClosest() = 0;
