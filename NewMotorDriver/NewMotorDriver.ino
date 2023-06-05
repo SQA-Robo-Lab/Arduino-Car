@@ -27,34 +27,46 @@ TurnSteeringDriveController dc(
     120,
     100);
 
-// left: weiß: 224-225, tape: 221-224, schwarz: 240-244, schwarzTape: 234-236 => min: 221, max: 244 => offset: 13, factor:
-// middle: weiß: 208-210, tape: 211-213, schwarz: 234-240, schwarzTape: 222-230 => min: 208, max: 240 => offset: 0, factor: 1
-// right: weiß: 229-230, tape: 226-228, schwarz: 240-246, schwarzTape: 239-241 => min: 226, max: 246 => offset: 18, factor:
+// left: weiß: 30-34, tape: 32-36, schwarz: 9-13, schwarzTape: 18-21 => min: 30 max: 21 => offset: 13, factor:
+// middle: weiß: 42-47, tape: 42-48, schwarz: 13-19, schwarzTape: 23-28 => min: 42, max: 28 => offset: 0, factor: 1
+// right: weiß: 24-30, tape: 22-32, schwarz: 7-10, schwarzTape: 13-19 => min: 22, max: 19 => offset: 18, factor:
+
+// printed
+//  left: weiß: 31-45, schwarz: 11 => min: 11 max: 31 => offset: 13, factor:
+//  middle: weiß: 44-55, schwarz: 14 => min: 14, max: 44 => offset: 0, factor: 1
+//  right: weiß: 28-40, schwarz: 8 => min: 8, max: 28 => offset: 18, factor:
 uint8_t pins[] = {A0, A1, A2};
 MappingFunction mappingFns[] = {
     [](uint8_t val)
     {
-        Serial.print("Left: ");
-        long after = map(val, 11, 34, 15, 47);
-        Serial.println(after);
+        // long after = map(val, 21, 30, 0, 100); // painted
+        long after = map(val, 11, 31, 0, 100); // printed
+        //  Serial.print("Left: ");
+        //  Serial.println(after);
+        // return val;
         return static_cast<uint8_t>(after);
     },
     [](uint8_t val)
     {
-        Serial.print("Middle: ");
-        Serial.println(val);
-        return val;
+        // long after = map(val, 21, 30, 0, 100); // painted
+        long after = map(val, 14, 44, 0, 100); // printed
+        // Serial.print("Middle: ");
+        // Serial.println(val);
+        // return val;
+        return static_cast<uint8_t>(after);
     },
     [](uint8_t val)
     {
-        Serial.print("Right: ");
-        long after = map(val, 9, 29, 15, 47);
-        Serial.println(after);
+        // long after = map(val, 21, 30, 0, 100); // painted
+        long after = map(val, 8, 28, 0, 100); // printed
+        // Serial.print("Right: ");
+        // Serial.println(after);
+        // return val;
         return static_cast<uint8_t>(after);
     }};
 BrightnessSensorAnalog sensor(pins, 3);
 
-LinearSensorEdgeDetector ld(sensor, 16, 47, 19, true);
+LinearSensorEdgeDetector ld(sensor, 16, 100, 0, false);
 
 void setup()
 { // middle: 66, right: 109, left: 19
@@ -151,10 +163,10 @@ void loop()
 
     int8_t pos = ld.getLinePositionMm();
     int8_t angle = ld.getLineAngle();
-    Serial.print("Detected line pos: ");
+    /*Serial.print("Detected line pos: ");
     Serial.print(pos);
     Serial.print("mm; Legacy: ");
-    Serial.println(ld.positionToLegacy(pos, angle));
+    Serial.println(ld.positionToLegacy(pos, angle));*/
 
     lineFollowing(dc, ld);
     delay(50);
