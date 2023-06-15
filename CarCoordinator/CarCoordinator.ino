@@ -1,5 +1,5 @@
 //#define ON_ESP
-#define SECOND_CAR
+//#define SECOND_CAR
 
 #include <Wire.h>
 

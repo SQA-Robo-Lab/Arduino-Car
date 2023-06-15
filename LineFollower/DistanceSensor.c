@@ -10,10 +10,17 @@
 #define DISTANCE_SENSOR_C
 
 // The digital pins used for the Arduino Car.
+#ifdef ARDUINO_UNO_CAR
+#define FRONT_TRIGGER_PIN 7
+#define FRONT_ECHO_PIN 4
+#define REAR_TRIGGER_PIN 7
+#define REAR_ECHO_PIN 4
+#else
 #define FRONT_TRIGGER_PIN 26
 #define FRONT_ECHO_PIN 18
 #define REAR_TRIGGER_PIN 24
 #define REAR_ECHO_PIN 25
+#endif
 // The time after which pulseIn will stop waiting. Can't be 0 to avoid the program crashing
 #define ECHO_TIMEOUT_US 10000
 

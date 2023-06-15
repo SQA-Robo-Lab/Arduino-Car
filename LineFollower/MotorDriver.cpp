@@ -9,27 +9,63 @@
 #include <avr/interrupt.h>
 #include "HardwareSerial.h"
 
-// The pins of an arduino (mega in this example) that are connected to the L298N motor controller.
+#ifdef STEERED_CAR
+    #include "Servo.h"
+#endif
 
-// Front Motor Controller
-// PMW pins
-#define FRONT_LEFT_ENGINE_SPEED_PIN 2
-#define FRONT_RIGHT_ENGINE_SPEED_PIN 7
-// Digital IO pins
-#define FRONT_LEFT_ENGINE_FORWARD_PIN 4
-#define FRONT_LEFT_ENGINE_REVERSE_PIN 3
-#define FRONT_RIGHT_ENGINE_FORWARD_PIN 5
-#define FRONT_RIGHT_ENGINE_REVERSE_PIN 6
 
-// Rear Motor Controller
-// PMW pins
-#define REAR_LEFT_ENGINE_SPEED_PIN 8
-#define REAR_RIGHT_ENGINE_SPEED_PIN 13
-// Digital IO pins
-#define REAR_LEFT_ENGINE_FORWARD_PIN 10
-#define REAR_LEFT_ENGINE_REVERSE_PIN 9
-#define REAR_RIGHT_ENGINE_FORWARD_PIN 11
-#define REAR_RIGHT_ENGINE_REVERSE_PIN 12
+#ifdef ARDUINO_UNO_CAR
+
+    #define FRONT_LEFT_ENGINE_SPEED_PIN 6
+    #define FRONT_RIGHT_ENGINE_SPEED_PIN 11
+    // Digital IO pins
+    #define FRONT_LEFT_ENGINE_FORWARD_PIN 8
+    #define FRONT_LEFT_ENGINE_REVERSE_PIN 9
+    #define FRONT_RIGHT_ENGINE_FORWARD_PIN 12
+    #define FRONT_RIGHT_ENGINE_REVERSE_PIN 13
+
+    // Rear Motor Controller
+    // PMW pins
+    #define REAR_LEFT_ENGINE_SPEED_PIN 3
+    #define REAR_RIGHT_ENGINE_SPEED_PIN 3
+    // Digital IO pins
+    #define REAR_LEFT_ENGINE_FORWARD_PIN 3
+    #define REAR_LEFT_ENGINE_REVERSE_PIN 3
+    #define REAR_RIGHT_ENGINE_FORWARD_PIN 3
+    #define REAR_RIGHT_ENGINE_REVERSE_PIN 3
+
+#else
+    // The pins of an arduino (mega in this example) that are connected to the L298N motor controller.
+    // Front Motor Controller
+    // PMW pins
+    #define FRONT_LEFT_ENGINE_SPEED_PIN 2
+    #define FRONT_RIGHT_ENGINE_SPEED_PIN 7
+    // Digital IO pins
+    #define FRONT_LEFT_ENGINE_FORWARD_PIN 4
+    #define FRONT_LEFT_ENGINE_REVERSE_PIN 3
+    #define FRONT_RIGHT_ENGINE_FORWARD_PIN 5
+    #define FRONT_RIGHT_ENGINE_REVERSE_PIN 6
+
+    // Rear Motor Controller
+    // PMW pins
+    #define REAR_LEFT_ENGINE_SPEED_PIN 8
+    #define REAR_RIGHT_ENGINE_SPEED_PIN 13
+    // Digital IO pins
+    #define REAR_LEFT_ENGINE_FORWARD_PIN 10
+    #define REAR_LEFT_ENGINE_REVERSE_PIN 9
+    #define REAR_RIGHT_ENGINE_FORWARD_PIN 11
+    #define REAR_RIGHT_ENGINE_REVERSE_PIN 12
+
+#endif
+
+#ifdef STEERED_CAR
+    #define STEER_SERVO_PIN 2
+    #define MAX_STEERING_ANGLE 45
+    #define MAX_STEER_SERVO_VALUE 111
+    #define MIN_STEER_SERVO_VALUE 21
+
+    Servo steeringServo;
+#endif
 
 #define BOOST_THRESHOLD 60
 
@@ -42,13 +78,6 @@ uint8_t frontLeftCurrDirection = 0; //0b00, 0b11: Off; 0b10: forward; 0b01: back
 uint8_t frontRightCurrDirection = 0;
 uint8_t rearLeftCurrDirection = 0;
 uint8_t rearRightCurrDirection = 0;
-
-enum MotorDirection {
-    MOTOR_STOP = 0b00,
-    MOTOR_BACKWARD = 0b01,
-    MOTOR_FORWARD = 0b10,
-    MOTOR_STOP_HIGH = 0b11
-};
 
 /* enum MotorName {
     FRONT_LEFT,
@@ -125,54 +154,64 @@ void initMotorDriver()
     /* for (int motor = FRONT_LEFT; motor <= REAR_RIGHT; motor++) {
         for (int pinIdx = SPEED; pinIdx <= )
     } */
+    Serial.println(FRONT_LEFT_ENGINE_SPEED_PIN);
+
     pinMode(FRONT_LEFT_ENGINE_SPEED_PIN, OUTPUT);
     pinMode(FRONT_RIGHT_ENGINE_SPEED_PIN, OUTPUT);
     pinMode(FRONT_LEFT_ENGINE_FORWARD_PIN, OUTPUT);
     pinMode(FRONT_LEFT_ENGINE_REVERSE_PIN, OUTPUT);
     pinMode(FRONT_RIGHT_ENGINE_FORWARD_PIN, OUTPUT);
     pinMode(FRONT_RIGHT_ENGINE_REVERSE_PIN, OUTPUT);
+
     pinMode(REAR_LEFT_ENGINE_SPEED_PIN, OUTPUT);
     pinMode(REAR_RIGHT_ENGINE_SPEED_PIN, OUTPUT);
     pinMode(REAR_LEFT_ENGINE_FORWARD_PIN, OUTPUT);
     pinMode(REAR_LEFT_ENGINE_REVERSE_PIN, OUTPUT);
     pinMode(REAR_RIGHT_ENGINE_FORWARD_PIN, OUTPUT);
     pinMode(REAR_RIGHT_ENGINE_REVERSE_PIN, OUTPUT);
-    pinMode(52, OUTPUT);
 
-    Serial.println("Soll:");
-    Serial.println(TCCR5A & ~(1 << WGM51) & ~(1 << WGM50));
-    Serial.println((TCCR5B & (~(1 << WGM52)) & (~(1 << CS51))) | (1 << WGM53) | (1 << CS50) | (1 << CS52));
-    Serial.println(TIMSK5 | (1 << TOIE5));
+    #ifdef STEERED_CAR
+        steeringServo.attach(STEER_SERVO_PIN);
+        setSteeringAngle(0);
+    #endif
 
-    cli();
-    // Set timer 5 to 9-bit PWM mode
-    TCCR5A = TCCR5A & ~(1 << WGM51) & ~(1 << WGM50);
-    // Ensure waveform generation mode bits are 0 to set mode
-    // And set clock select to /1024 prescaler
-    TCCR5B = (TCCR5B & (~(1 << WGM52)) & (~(1 << CS51))) | (1 << WGM53) | (1 << CS50) | (1 << CS52);
-    // Set top value of counter
-    ICR5H = 0b00011111;
-    ICR5L = 0b11111111;
-    // Enable overflow interrupt
-    TIMSK5 = TIMSK5 | (1 << TOIE5);
-    sei();
+    #ifdef AVR_MEGA
+        //Set timer 5
+        pinMode(52, OUTPUT);
+        Serial.println("Soll:");
+        Serial.println(TCCR5A & ~(1 << WGM51) & ~(1 << WGM50));
+        Serial.println((TCCR5B & (~(1 << WGM52)) & (~(1 << CS51))) | (1 << WGM53) | (1 << CS50) | (1 << CS52));
+        Serial.println(TIMSK5 | (1 << TOIE5));
+
+        cli();
+        // Set timer 5 to 9-bit PWM mode
+        TCCR5A = TCCR5A & ~(1 << WGM51) & ~(1 << WGM50);
+        // Ensure waveform generation mode bits are 0 to set mode
+        // And set clock select to /1024 prescaler
+        TCCR5B = (TCCR5B & (~(1 << WGM52)) & (~(1 << CS51))) | (1 << WGM53) | (1 << CS50) | (1 << CS52);
+        // Set top value of counter
+        ICR5H = 0b00011111;
+        ICR5L = 0b11111111;
+        // Enable overflow interrupt
+        TIMSK5 = TIMSK5 | (1 << TOIE5);
+        sei();
+
+    #endif
 }
 
-bool isOn = false;
+#ifdef AVR_MEGA
+    bool isOn = false;
 
-ISR(TIMER5_OVF_vect) {
-    isOn = !isOn;
-    digitalWrite(52, isOn);
-    analogWrite(FRONT_LEFT_ENGINE_SPEED_PIN, frontLeftCurrSpeed);
-    analogWrite(REAR_LEFT_ENGINE_SPEED_PIN, rearLeftCurrSpeed);
-    analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, frontRightCurrSpeed);
-    analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, rearRightCurrSpeed);
-}
+    ISR(TIMER5_OVF_vect) {
+        isOn = !isOn;
+        digitalWrite(52, isOn);
+    }
 
-void resetTimer5() {
-    TCNT5H = 0;
-    TCNT5L = 1;
-}
+    void resetTimer5() {
+        TCNT5H = 0;
+        TCNT5L = 1;
+    }
+#endif
 
 /**
  * @brief Sets the speed of the front right motor to the desired value
@@ -186,6 +225,7 @@ void frontLeftSpeed(int speed)
         frontLeftStop();
     } else {
         frontLeftDirection(frontLeftCurrDirection);
+        analogWrite(FRONT_LEFT_ENGINE_SPEED_PIN, frontLeftCurrSpeed);
     }
     /*if (frontLeftCurrSpeed > 0 && frontLeftCurrSpeed < BOOST_THRESHOLD) {
         Serial.print("Boosting for ");
@@ -197,7 +237,6 @@ void frontLeftSpeed(int speed)
         Serial.println(frontLeftCurrSpeed);
         analogWrite(FRONT_LEFT_ENGINE_SPEED_PIN, frontLeftCurrSpeed);
     }*/
-    analogWrite(FRONT_LEFT_ENGINE_SPEED_PIN, frontLeftCurrSpeed);
 }
 
 /**
@@ -212,8 +251,8 @@ void rearLeftSpeed(int speed)
         rearLeftStop();
     } else {
         rearLeftDirection(rearLeftCurrDirection);
+        analogWrite(REAR_LEFT_ENGINE_SPEED_PIN, speed);
     }
-    analogWrite(REAR_LEFT_ENGINE_SPEED_PIN, speed);
 }
 
 /**
@@ -228,8 +267,8 @@ void frontRightSpeed(int speed)
         frontRightStop();
     } else {
         frontRightDirection(frontRightCurrDirection);
+        analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, speed);
     }
-    analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, speed);
 }
 
 /**
@@ -244,8 +283,8 @@ void rearRightSpeed(int speed)
         rearRightStop();
     } else {
         rearRightDirection(rearRightCurrDirection);
+        analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, speed);
     }
-    analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, speed);
 }
 
 void frontLeftDirection(uint8_t direction) {
@@ -310,8 +349,8 @@ void rightReverse()
  */
 void rightSpeed(int speed)
 {
-    analogWrite(FRONT_RIGHT_ENGINE_SPEED_PIN, speed);
-    analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, speed);
+    frontRightSpeed(speed);
+    rearRightSpeed(speed);
 }
 
 /**
@@ -360,6 +399,25 @@ void rearRightStop() {
     analogWrite(REAR_RIGHT_ENGINE_SPEED_PIN, 255);
     digitalWrite(REAR_RIGHT_ENGINE_FORWARD_PIN, LOW);
     digitalWrite(REAR_RIGHT_ENGINE_REVERSE_PIN, LOW);
+}
+
+void setSteeringAngle(int8_t angle) {
+#ifdef STEERED_CAR
+    long value = min(MAX_STEER_SERVO_VALUE, max(MIN_STEER_SERVO_VALUE, map(angle, -MAX_STEERING_ANGLE, MAX_STEERING_ANGLE, MIN_STEER_SERVO_VALUE, MAX_STEER_SERVO_VALUE)));
+    /*Serial.print("Steering: Angle: ");
+    Serial.print(angle);
+    Serial.print("°; Value: ");
+    Serial.println(value);*/
+    steeringServo.write(value);
+#endif
+}
+
+int8_t fracionToAngle(double fraction) {
+    if (fraction >= 0) {
+        return round(90.0-atan(2/fraction)/PI*180);
+    } else {
+        return round(-(90+atan(2/fraction)/PI*180));
+    }
 }
 
 /**
@@ -419,6 +477,16 @@ void stop()
 }
 
 /**
+ * @brief Sets the direction of all motors to the desired direction
+ */
+void setDirection(MotorDirection direction) {
+    frontLeftDirection(direction);
+    frontRightDirection(direction);
+    rearLeftDirection(direction);
+    rearRightDirection(direction);
+}
+
+/**
  * @brief Sets the movement direction of all motors to "forward".
  *
  * If the motor direction is currently set to "reverse", this method changes the motor direction.
@@ -426,6 +494,9 @@ void stop()
  */
 void forward()
 {
+    #ifdef STEERED_CAR
+        setSteeringAngle(0);
+    #endif
     leftForward();
     rightForward();
 }
@@ -483,8 +554,14 @@ void driveReverse(int speed)
  */
 void turnLeft()
 {
-    rightForward();
-    leftReverse();
+    #ifdef STEERED_CAR
+        setSteeringAngle(-45);
+        leftForward();
+        rightForward();
+    #else
+        rightForward();
+        leftReverse();
+    #endif
 }
 
 /**
@@ -497,9 +574,14 @@ void turnLeft()
  */
 void turnLeftForward(int speed)
 {
-    leftSpeed(speed*0.75);
-    rightSpeed(speed*1.25);
-    turnLeft();
+    #ifdef STEERED_CAR
+        setSteeringAngle(-30);
+        setSpeed(speed);
+    #else
+        leftSpeed(speed*0.75);
+        rightSpeed(speed*1.25);
+        turnLeft();
+    #endif
 }
 
 /**
@@ -509,8 +591,14 @@ void turnLeftForward(int speed)
  */
 void turnRight()
 {
-    leftForward();
-    rightReverse();
+    #ifdef STEERED_CAR
+        setSteeringAngle(45);
+        leftForward();
+        rightForward();
+    #else
+        leftForward();
+        rightReverse();
+    #endif
 }
 
 /**
@@ -523,21 +611,38 @@ void turnRight()
  */
 void turnRightForward(int speed)
 {
-    rightSpeed(speed*0.75);
-    leftSpeed(speed*1.25);
-    turnRight();
+    #ifdef STEERED_CAR
+        setSteeringAngle(30);
+        setSpeed(speed);
+    #else
+        rightSpeed(speed*0.75);
+        leftSpeed(speed*1.25);
+        turnRight();
+    #endif
 }
 
 void steerLeftForward(int speed, double fraction)
 {
     forward();
-    leftSpeed(speed / fraction);
-    rightSpeed(speed);
+
+    #ifdef STEERED_CAR
+        setSteeringAngle(-fracionToAngle(fraction));
+        setSpeed(speed);
+    #else
+        leftSpeed(speed / fraction);
+        rightSpeed(speed);
+    #endif
 }
 
 void steerRightForward(int speed, double fraction)
 {
     forward();
-    leftSpeed(speed);
-    rightSpeed(speed / fraction);
+
+    #ifdef STEERED_CAR
+        setSteeringAngle(fracionToAngle(fraction));
+        setSpeed(speed);
+    #else
+        leftSpeed(speed);
+        rightSpeed(speed / fraction);
+    #endif
 }

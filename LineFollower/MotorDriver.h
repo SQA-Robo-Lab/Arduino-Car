@@ -6,8 +6,18 @@
 
 #include "Arduino.h"
 
+//#define ARDUINO_UNO_CAR
+//#define STEERED_CAR
+
 #ifndef MOTOR_DRIVER_H
 #define MOTOR_DRIVER_H
+
+enum MotorDirection {
+    MOTOR_STOP = 0b00,
+    MOTOR_BACKWARD = 0b01,
+    MOTOR_FORWARD = 0b10,
+    MOTOR_STOP_HIGH = 0b11
+};
 
 /**
  * @brief Initializes the motor driver by setting the pin modes for the arduino pins.
@@ -53,6 +63,8 @@ void frontRightDirection(uint8_t direction);
 void rearLeftDirection(uint8_t direction);
 
 void rearRightDirection(uint8_t direction);
+
+void setSteeringAngle(int8_t angle);
 
 /**
  * @brief Sets the dc motor direction of the right motors to "reverse".
@@ -147,6 +159,11 @@ void stop();
  * If the motor direction was already set to "forward", the method will not affect any change.
  */
 void forward();
+
+/**
+ * @brief Sets the direction of all motors to the desired direction
+ */
+void setDirection(MotorDirection direction);
 
 /**
  * @brief Sets the movement direction of all motors to "forward" AND sets the motor speed.
