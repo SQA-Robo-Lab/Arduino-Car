@@ -23,6 +23,8 @@ void FixedWheelDriveController::setSpeedInternal(int16_t speed)
     {
         this->rearLeft.setSpeed(speed);
         this->rearRight.setSpeed(speed);
+        this->frontLeft.setSpeed(speed);
+        this->frontRight.setSpeed(speed);
         return;
     }
 
@@ -34,11 +36,15 @@ void FixedWheelDriveController::setSpeedInternal(int16_t speed)
     {
         this->rearLeft.setSpeed(speed * outerWheelSpeedFactor);
         this->rearRight.setSpeed(speed * innerWheelSpeedFactor);
+        this->frontLeft.setSpeed(speed * outerWheelSpeedFactor);
+        this->frontRight.setSpeed(speed * innerWheelSpeedFactor);
     }
     else
     {
         this->rearLeft.setSpeed(speed * innerWheelSpeedFactor);
         this->rearRight.setSpeed(speed * outerWheelSpeedFactor);
+        this->frontLeft.setSpeed(speed * innerWheelSpeedFactor);
+        this->frontRight.setSpeed(speed * outerWheelSpeedFactor);
     }
 }
 

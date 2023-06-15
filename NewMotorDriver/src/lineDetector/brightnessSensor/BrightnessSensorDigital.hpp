@@ -13,7 +13,7 @@ public:
     BrightnessSensorDigital(uint8_t *pinNumbers, uint8_t numberOfPins, bool pullup = false);
     ~BrightnessSensorDigital();
 
-    uint8_t getValues(uint8_t *array, uint8_t maxLen) override;
+    uint8_t getValues(float *array, uint8_t maxLen) override;
     uint8_t numberOfSensors() override;
 };
 

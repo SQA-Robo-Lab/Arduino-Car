@@ -4,20 +4,15 @@
 
 #define NO_SENSOR_INDEX 255
 
-float floatMap(float val, float inMin, float inMax, float outMin, float outMax)
-{
-    return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-}
-
-LinearSensorEdgeDetector::LinearSensorEdgeDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm, uint8_t definetlyWhiteThrethold, uint8_t definetlyBlackThrethold, bool followLeftEdge)
-    : sensorsLen(1), sensorDistance(sensorDistanceMm), whiteThrethold(definetlyWhiteThrethold), blackThrethold(definetlyBlackThrethold), leftEdge(followLeftEdge)
+LinearSensorEdgeDetector::LinearSensorEdgeDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm, bool followLeftEdge)
+    : sensorsLen(1), sensorDistance(sensorDistanceMm), leftEdge(followLeftEdge)
 {
     this->sensors = new BrightnessSensor *[1];
     this->sensors[0] = &sensor;
     this->totalSensors = sensor.numberOfSensors();
 }
-LinearSensorEdgeDetector::LinearSensorEdgeDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm, uint8_t definetlyWhiteThrethold, uint8_t definetlyBlackThrethold, bool followLeftEdge)
-    : sensorsLen(numberOfSensors), sensorDistance(sensorDistanceMm), whiteThrethold(definetlyWhiteThrethold), blackThrethold(definetlyBlackThrethold), leftEdge(followLeftEdge)
+LinearSensorEdgeDetector::LinearSensorEdgeDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm, bool followLeftEdge)
+    : sensorsLen(numberOfSensors), sensorDistance(sensorDistanceMm), leftEdge(followLeftEdge)
 {
     this->sensors = new BrightnessSensor *[numberOfSensors];
     memcpy(this->sensors, multipleSensors, numberOfSensors);
@@ -34,7 +29,7 @@ LinearSensorEdgeDetector::~LinearSensorEdgeDetector()
 
 int8_t LinearSensorEdgeDetector::getLinePositionMm()
 {
-    uint8_t values[this->totalSensors];
+    float values[this->totalSensors];
     uint32_t nextIndex = 0;
 
     for (uint8_t i = 0; i < this->sensorsLen; i++)
@@ -43,21 +38,18 @@ int8_t LinearSensorEdgeDetector::getLinePositionMm()
     }
 
 #ifdef LINE_SENSOR_DEBUG
-    Serial.print("Brigtness values (raw,mapped): ");
+    Serial.print("Brigtness values: ");
 #endif
 
     float fValues[this->totalSensors];
     for (uint8_t i = 0; i < this->totalSensors; i++)
     {
-        float mapped = floatMap(values[i], this->whiteThrethold, this->blackThrethold, 0, 1);
 #ifdef LINE_SENSOR_DEBUG
         Serial.print("(");
-        Serial.print(values[i]);
-        Serial.print(",");
-        Serial.print(mapped);
+        Serial.print(1 - values[i]);
         Serial.print("); ");
 #endif
-        fValues[this->leftEdge ? i : this->totalSensors - i - 1] = mapped;
+        fValues[this->leftEdge ? i : this->totalSensors - i - 1] = 1 - values[i];
     }
 #ifdef LINE_SENSOR_DEBUG
     // Serial.println();
@@ -71,7 +63,7 @@ int8_t LinearSensorEdgeDetector::getLinePositionMm()
         {
             firstBlackIndex = i;
         }
-        if (firstNonWhite == NO_SENSOR_INDEX && fValues[i] > 0.1)
+        if (firstNonWhite == NO_SENSOR_INDEX && fValues[i] > 0)
         {
             firstNonWhite = i;
         }
@@ -87,7 +79,9 @@ int8_t LinearSensorEdgeDetector::getLinePositionMm()
     float linePosRel = NAN;
     if (firstBlackIndex == firstNonWhite + 1)
     {
+#ifdef LINE_SENSOR_DEBUG
         Serial.print("; A");
+#endif
         // edge between first non white and first black
         linePosRel = firstBlackIndex - fValues[firstNonWhite];
     }
@@ -97,20 +91,26 @@ int8_t LinearSensorEdgeDetector::getLinePositionMm()
         {
             if (firstNonWhite == firstBlackIndex)
             {
+#ifdef LINE_SENSOR_DEBUG
                 Serial.print("; B");
+#endif
                 // edge is (somewhere) between first black and previous
-                linePosRel = firstBlackIndex - 0.5;
+                linePosRel = firstBlackIndex;
             }
             else
             {
+#ifdef LINE_SENSOR_DEBUG
                 Serial.print("; C");
+#endif
                 // edge between first black and one previous
                 linePosRel = firstBlackIndex - fValues[firstNonWhite];
             }
         }
         else
         {
+#ifdef LINE_SENSOR_DEBUG
             Serial.print("; D");
+#endif
             // black is at edge of sensor array; edge of line outside
             linePosRel = 0;
         }
@@ -123,25 +123,41 @@ int8_t LinearSensorEdgeDetector::getLinePositionMm()
 
         if (nextValue > 0)
         {
+#ifdef LINE_SENSOR_DEBUG
             Serial.print("; E");
+#endif
             // sensor after first non white is darker => line edge must be between that and the first non white
-            float scale = 1.0 / (firstNonWhiteValue + nextValue);
+
+            /* Causes jumping, if better idea: refactor
+            float scale = 1.0 / max(firstNonWhiteValue, nextValue);
             firstNonWhiteValue *= scale;
             nextValue *= scale;
-            float posBetween = (-firstNonWhiteValue + nextValue) / 2.0 + 0.5;
-            linePosRel = firstNonWhite + posBetween;
+            float posBetween = -firstNonWhiteValue + nextValue;
+            if (posBetween < 0)
+            {
+                linePosRel = firstNonWhite + 1 + posBetween;
+            }
+            else
+            {
+                linePosRel = firstNonWhite + posBetween;
+            }*/
+            linePosRel = firstNonWhite + 1 - firstNonWhiteValue;
         }
         else
         {
             if (firstNonWhite > 0)
             {
+#ifdef LINE_SENSOR_DEBUG
                 Serial.print("; F");
+#endif
                 // sensor after first non white is white (as is the one previous) => line edge must be between previous and first non white
-                linePosRel = firstNonWhite - 0.5;
+                linePosRel = firstNonWhite;
             }
             else
             {
+#ifdef LINE_SENSOR_DEBUG
                 Serial.print("; G");
+#endif
                 // sensor after first non white is white and first non white is the first sensor => line edge is propably outside
                 linePosRel = 0;
             }

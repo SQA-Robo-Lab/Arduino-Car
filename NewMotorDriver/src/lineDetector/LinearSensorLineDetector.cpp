@@ -2,15 +2,15 @@
 
 #define LINE_SENSOR_DEBUG
 
-LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm, uint8_t definetlyWhiteThrethold, uint8_t definetlyBlackThrethold)
-    : sensorsLen(1), sensorDistance(sensorDistanceMm), whiteThrethold(definetlyWhiteThrethold), blackThrethold(definetlyBlackThrethold)
+LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor &sensor, uint8_t sensorDistanceMm)
+    : sensorsLen(1), sensorDistance(sensorDistanceMm)
 {
     this->sensors = new BrightnessSensor *[1];
     this->sensors[0] = &sensor;
     this->totalSensors = sensor.numberOfSensors();
 }
-LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm, uint8_t definetlyWhiteThrethold, uint8_t definetlyBlackThrethold)
-    : sensorsLen(numberOfSensors), sensorDistance(sensorDistanceMm), whiteThrethold(definetlyWhiteThrethold), blackThrethold(definetlyBlackThrethold)
+LinearSensorLineDetector::LinearSensorLineDetector(BrightnessSensor **multipleSensors, uint8_t numberOfSensors, uint8_t sensorDistanceMm)
+    : sensorsLen(numberOfSensors), sensorDistance(sensorDistanceMm)
 {
     this->sensors = new BrightnessSensor *[numberOfSensors];
     memcpy(this->sensors, multipleSensors, numberOfSensors);
@@ -27,7 +27,7 @@ LinearSensorLineDetector::~LinearSensorLineDetector()
 
 int8_t LinearSensorLineDetector::getLinePositionMm()
 {
-    uint8_t values[this->totalSensors];
+    float values[this->totalSensors];
     uint32_t nextIndex = 0;
     for (uint16_t i = 0; i < this->sensorsLen; i++)
     {
@@ -43,9 +43,7 @@ int8_t LinearSensorLineDetector::getLinePositionMm()
     float lowerValForMax = 0;
     uint8_t numLargerHalf = 0;
 
-    int16_t levelDiff = static_cast<int16_t>(this->blackThrethold) - static_cast<int16_t>(this->whiteThrethold);
-    float prevVal = (static_cast<float>(values[0]) - this->whiteThrethold) / levelDiff;
-    prevVal = min(1, max(0, prevVal));
+    float prevVal = 1 - values[0];
     if (prevVal > 0.5)
     {
         numLargerHalf++;
@@ -57,8 +55,7 @@ int8_t LinearSensorLineDetector::getLinePositionMm()
 
     for (nextIndex = 1; nextIndex < this->totalSensors; nextIndex++)
     {
-        float currVal = (static_cast<float>(values[nextIndex]) - this->whiteThrethold) / levelDiff;
-        currVal = min(1, max(0, currVal));
+        float currVal = 1 - values[nextIndex];
 
 #ifdef LINE_SENSOR_DEBUG
         Serial.print(currVal);
