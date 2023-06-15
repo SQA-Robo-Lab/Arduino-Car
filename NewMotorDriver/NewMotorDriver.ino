@@ -22,30 +22,19 @@ WifiDebug *debug;
 const PROGMEM int16_t rpmLut[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 64, 64, 64, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255};
 
 uint8_t pins[] = {A0, A1, A2};
-BrightnessSensorAnalog sensor(pins, 3);
 #ifdef UNO_STEERING_CAR
-MappingFunction mappingFns[] = {
-    [](uint8_t val)
-    {
-        // long after = map(val, 21, 30, 0, 100); // painted
-        long after = map(val, 11, 31, 0, 100); // printed
-        return val;
-        return static_cast<uint8_t>(after);
-    },
-    [](uint8_t val)
-    {
-        // long after = map(val, 21, 30, 0, 100); // painted
-        long after = map(val, 14, 44, 0, 100); // printed
-        return val;
-        return static_cast<uint8_t>(after);
-    },
-    [](uint8_t val)
-    {
-        // long after = map(val, 21, 30, 0, 100); // painted
-        long after = map(val, 8, 28, 0, 100); // printed
-        return val;
-        return static_cast<uint8_t>(after);
-    }};
+// left: weiß: 30-34, tape: 32-36, schwarz: 9-13, schwarzTape: 18-21 => min: 30 max: 21 => offset: 13, factor:
+// middle: weiß: 42-47, tape: 42-48, schwarz: 13-19, schwarzTape: 23-28 => min: 42, max: 28 => offset: 0, factor: 1
+// right: weiß: 24-30, tape: 22-32, schwarz: 7-10, schwarzTape: 13-19 => min: 22, max: 19 => offset: 18, factor:
+
+// printed
+//  left: weiß: 114-180, schwarz: 41 => min: 11 max: 31 => offset: 13, factor:
+//  middle: weiß: 132-235, schwarz: 61 => min: 14, max: 44 => offset: 0, factor: 1
+//  right: weiß: 80-170, schwarz: 31 => min: 8, max: 28 => offset: 18, factor:
+BrightnessThresholds thresholds[] = {
+    {41, 114},
+    {61, 140},
+    {31, 81}};
 
 ServoAxle serv(2, 40, 39, 19, 66, 109);
 MotorDcHBridge rearLeft(MOTOR_SPEED_UNIT_RPM, 6, 7, 8);
@@ -56,40 +45,15 @@ TurnSteeringDriveController dc(
     serv,
     120,
     100);
-LinearSensorEdgeDetector ld(sensor, 16, 100, 0, false);
+BrightnessSensorAnalog sensor(pins, 3, thresholds);
+LinearSensorEdgeDetector ld(sensor, 16, true);
 UltrasonicDistanceSensor frontDistance(13, 4);
 UltrasonicDistanceSensor &rearDistance = frontDistance;
 #elif defined(MEGA_FIXED_CAR)
-// left: weiß: 30-34, tape: 32-36, schwarz: 9-13, schwarzTape: 18-21 => min: 30 max: 21 => offset: 13, factor:
-// middle: weiß: 42-47, tape: 42-48, schwarz: 13-19, schwarzTape: 23-28 => min: 42, max: 28 => offset: 0, factor: 1
-// right: weiß: 24-30, tape: 22-32, schwarz: 7-10, schwarzTape: 13-19 => min: 22, max: 19 => offset: 18, factor:
-
-// printed
-//  left: weiß: 31-45, schwarz: 11 => min: 11 max: 31 => offset: 13, factor:
-//  middle: weiß: 44-55, schwarz: 14 => min: 14, max: 44 => offset: 0, factor: 1
-//  right: weiß: 28-40, schwarz: 8 => min: 8, max: 28 => offset: 18, factor:
-MappingFunction mappingFns[] = {
-    [](uint8_t val)
-    {
-        // long after = map(val, 21, 30, 0, 100); // painted
-        long after = map(val, 11, 31, 0, 100); // printed
-        // return val;
-        return static_cast<uint8_t>(after);
-    },
-    [](uint8_t val)
-    {
-        // long after = map(val, 21, 30, 0, 100); // painted
-        long after = map(val, 14, 44, 0, 100); // printed
-        // return val;
-        return static_cast<uint8_t>(after);
-    },
-    [](uint8_t val)
-    {
-        // long after = map(val, 21, 30, 0, 100); // painted
-        long after = map(val, 8, 28, 0, 100); // printed
-        // return val;
-        return static_cast<uint8_t>(after);
-    }};
+BrightnessThresholds thresholds[] = {
+    {66, 45},
+    {741, 95},
+    {340, 53}};
 
 MotorDcHBridge frontLeft(MOTOR_SPEED_UNIT_RPM, 2, 3, 4);
 MotorDcHBridge frontRight(MOTOR_SPEED_UNIT_RPM, 7, 6, 5);
@@ -102,7 +66,8 @@ FixedWheelDriveController dc(
     rearRight,
     129,
     119);
-LinearSensorEdgeDetector ld(sensor, 17, 100, 0, false);
+BrightnessSensorAnalog sensor(pins, 3, thresholds);
+LinearSensorEdgeDetector ld(sensor, 17, false);
 UltrasonicDistanceSensor frontDistance(26, 27);
 UltrasonicDistanceSensor rearDistance(24, 25);
 #endif
@@ -119,7 +84,6 @@ void setup()
     Serial.begin(115200);
     Serial.println("Started");
     dc.setSpeed(64);
-    sensor.setTranslationFunctions(mappingFns);
 }
 
 void loop()

@@ -68,7 +68,7 @@ void lineFollowing(DriveController &dc, LineDetector &ld, DistanceSensor &distFr
         lastAngle = newAngle;
         lastTime = thisTime;
 #else
-        // dc.setAngle(lp * 20 / 16);
+        dc.setAngle(lp * 20 / 16);
 #endif
     }
 }
