@@ -13,7 +13,7 @@ private:
     uint16_t timeoutUs;
 
 protected:
-    uint16_t echoTimeToMm(uint16_t echoTimeUs);
+    uint16_t echoTimeToMm(unsigned long echoTimeUs);
 
 public:
     UltrasonicDistanceSensor(uint8_t triggerPin, uint8_t echoPin, uint16_t maxDistance = 1000);
